@@ -1,3 +1,7 @@
+
+
+
+
 // Setup
 var width = 1200;
 var height = 700;
@@ -5,8 +9,8 @@ var height = 700;
 // Force Setup
 var force = d3.layout.force()
 .size([width, height])
-.charge(-400)
-.linkDistance(40)
+.charge(-40)
+.linkDistance(60)
 .on("tick", tick);
 
 var drag = force.drag()
@@ -26,7 +30,16 @@ d3.json("data.json", function(error, graph) {
   force
   .nodes(graph.nodes)
   .links(graph.links)
+  .friction(0.2)
   .start();
+
+  /*
+  for(var i = 0; i < 100; i++) {
+    force.tick();
+  }
+
+  force.stop();
+  */
 
   // Adding Links to Visualization
   link = link.data(graph.links)
@@ -38,8 +51,18 @@ d3.json("data.json", function(error, graph) {
   .enter().append("circle")
   .attr("class", "node")
   .attr("r", 12)
-  .on("dblclick", doubleClick)
+  //.on("dblclick", doubleClick)
   .call(drag);
+
+  node.append("svg:text")
+  .attr("class", "text")
+  .attr("x", 12)
+  .attr("y", "20")
+  .text(function(d) {
+    return d.name });
+
+
+
 });
 
 function tick() {
@@ -57,5 +80,5 @@ function doubleClick(f)  {
 }
 
 function dragStart(f)  {
-  d3.select(this).classed("fixed", f.fixed = true);
+  //d3.select(this).classed("fixed", f.fixed = true);
 }
