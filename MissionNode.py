@@ -5,7 +5,8 @@ class MissionNode(Node):
     content: a string containing the content of the mission
     """
 
-    def __init__(self, name, label, content):
-    	self.name = name
+    def __init__(self, ID, label, content):
+        """Return a Node object with name *name* and label *label*"""
+        self.ID = ID
     	self.label = label
     	self.content = content

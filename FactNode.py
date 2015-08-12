@@ -2,10 +2,11 @@ class FactNode(Node):
 	 """A subclass of Node, specifically a node containing a fact.
 
     Attributes:
-    factText: a string containing the content of the fact
+    content: a string containing the content of the fact
     """
 
-    def __init__(self, name, label, content):
-    	self.name = name
+    def __init__(self, ID, label, content):
+        """Return a Node object with name *name* and label *label*"""
+        self.ID = ID
     	self.label = label
     	self.content = content
