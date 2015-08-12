@@ -7,7 +7,7 @@ class Group(object):
         colour: colour in which the nodes of that group will be displayed
     """
 
-    def __init__(self, groupID):
+    def __init__(self, groupID, ):
         self.groupID = groupID
         self.nodesInGroup = {}
 

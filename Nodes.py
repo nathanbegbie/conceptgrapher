@@ -21,8 +21,6 @@ class Node(object):
         self.successors = {}
         self.outDegree = 0
 
-    # def add_group(group):
-
     def add_successor(self, node):
         self.successors[node.ID] = node
 
@@ -82,4 +80,3 @@ class ConceptNode(Node):
         self.ID = ID
         self.label = label
         self.content = content
-        
