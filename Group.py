@@ -3,8 +3,13 @@ class Group(object):
 
     Attributes:
         groupID: unique identifier of group
+        nodesInGroup : a dictionary of nodes belonging to the group
         colour: colour in which the nodes of that group will be displayed
     """
 
     def __init__(self, groupID):
         self.groupID = groupID
+        self.nodesInGroup = {}
+
+    def add_node_to_group(node):
+    	self.nodesInGroup[node.ID] = node
