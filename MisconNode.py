@@ -1,11 +1,11 @@
 from Node import Node
 
 
-class MissionNode(Node):
-    """A subclass of Node, specifically a node containing a misson.
+class MisconNode(Node):
+    """A subclass of Node, specifically a node containing a misconception.
 
     Attributes:
-    content: a string containing the content of the mission
+    content: a string containing the content of the misconception
     """
 
     def __init__(self, ID, label, content):
