@@ -1,5 +1,6 @@
+
+
 class Translator:
-    
-    def initialise_data(fileName):
+
+    def initialise_data(self, fileName):
         return ""
-        

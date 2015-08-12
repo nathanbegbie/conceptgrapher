@@ -11,5 +11,5 @@ class Group(object):
         self.groupID = groupID
         self.nodesInGroup = {}
 
-    def add_node_to_group(node):
-    	self.nodesInGroup[node.ID] = node
+    def add_node_to_group(self, node):
+        self.nodesInGroup[node.ID] = node

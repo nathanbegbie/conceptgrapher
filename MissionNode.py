@@ -1,5 +1,8 @@
+from Node import Node
+
+
 class MissionNode(Node):
-	 """A subclass of Node, specifically a node containing a misson.
+    """A subclass of Node, specifically a node containing a misson.
 
     Attributes:
     content: a string containing the content of the mission
@@ -8,5 +11,5 @@ class MissionNode(Node):
     def __init__(self, ID, label, content):
         """Return a Node object with name *name* and label *label*"""
         self.ID = ID
-    	self.label = label
-    	self.content = content
+        self.label = label
+        self.content = content

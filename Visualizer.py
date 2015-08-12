@@ -1,19 +1,19 @@
 class Visualizer:
-    
-    def display_graph():
+
+    def display_graph(self):
         return ""
-        
-    def highlight_group(groupID):
+
+    def highlight_group(self, groupID):
         return ""
-    def show_group_button(groupID):
+
+    def show_group_button(self, groupID):
         return ""
-        
-    def display_group(groupID):
+
+    def display_group(self, groupID):
         return ""
-        
-    def highlight_cycles(groupID):
+
+    def highlight_cycles(self, groupID):
         return ""
-        
-    def highlight_triangles(groupID):
+
+    def highlight_triangles(self, groupID):
         return ""
-        
