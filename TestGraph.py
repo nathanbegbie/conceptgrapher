@@ -26,7 +26,7 @@ class TestGraph:
     def test_node_addition(self):
         test_node = Node("id1234", "test label")
         test_graph = Graph()
-        test_graph.addNode(test_node)
+        test_graph.add_node(test_node)
         assert test_graph.nodeDict["id1234"] == test_node
 
     def test_node_removal(self):
@@ -34,15 +34,15 @@ class TestGraph:
         test_node2 = Node("id5678", "test label 2")
         node_dict = {test_node1.ID: test_node1, test_node2.ID: test_node2}
         test_graph = Graph(nodes=node_dict)
-        test_graph.removeNode(test_node1)
-        assert test_graph.nodeDict["id1234"] is None
+        test_graph.remove_node(test_node1)
+        assert test_node1 not in test_graph.nodeDict
 
     def test_edge_addition(self):
         nFrom = Node("idFrom", "from label")
         nTo = Node("idTo", "to label")
         test_edge = Edge(nFrom, nTo)
         test_graph = Graph()
-        test_graph.addEdge(test_edge)
+        test_graph.add_edge(test_edge)
         assert test_graph.edgeDict["idFrom"] == test_edge
 
     def test_edge_removal(self):
@@ -55,5 +55,5 @@ class TestGraph:
         edge_dict = {test_edge1.nodeFrom.ID: test_edge1,
                      test_edge2.nodeFrom.ID: test_edge2}
         test_graph = Graph(edges=edge_dict)
-        test_graph.removeEdge(test_edge1)
-        assert test_graph.edgeDict["id1234a"] is None
+        test_graph.remove_edge(test_edge1)
+        assert test_edge1 not in test_graph.edgeDict

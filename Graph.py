@@ -20,15 +20,15 @@ class Graph(object):
         self.numNodes += 1
 
     def remove_node(self, node):
-        # what if node doesn't exist?
-        del self.nodeDict[node.ID]
+        if self.nodeDict[node.ID]:
+            del self.nodeDict[node.ID]
 
     def add_edge(self, edge):
         self.edgeDict[edge.nodeFrom.ID] = edge
 
     def remove_edge(self, edge):
-        # what if node doesn't exist?
-        del self.edgeDict[edge.nodeFrom.ID]
+        if self.edgeDict[edge.nodeFrom.ID]:
+            del self.edgeDict[edge.nodeFrom.ID]
 
     def export(self, filename):
         # export the graph to JSON file
