@@ -10,8 +10,8 @@ class Graph(object):
 # group should be subclass :(
 
     def __init__(self, nodes={}, edges={}):
-        self.nodeDict = {}
-        self.edgeDict = {}
+        self.nodeDict = nodes
+        self.edgeDict = edges
         self.numNodes = len(self.nodeDict)
 
     # need add_group_node etc? The node itself will be the correct node type
