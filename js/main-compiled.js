@@ -16,7 +16,7 @@ var Visualizer = (function () {
     key: "run",
     value: function run() {
       // Force Setup
-      var force = d3.layout.force().size([this.width, this.height]).charge(-40).linkDistance(60).on("tick", tick);
+      var force = d3.layout.force().size([this.width, this.height]).charge(-500).linkDistance(60).on("tick", tick);
 
       var drag = force.drag().on("dragstart", dragStart);
 
@@ -42,13 +42,19 @@ var Visualizer = (function () {
         link = link.data(graph.links).enter().append("line").attr("class", "link");
 
         // Adding Nodes to Visualization
-        node = node.data(graph.nodes).enter().append("circle").attr("class", "node").attr("r", 12)
+        node = node.data(graph.nodes).enter().append("circle").attr("class", function (d) {
+          return d.group + " node";
+        }).attr("r", 12)
         //.on("dblclick", doubleClick)
         .call(drag);
 
         node.append("svg:text").attr("class", "text").attr("x", 12).attr("y", "20").text(function (d) {
           return d.name;
         });
+
+        setTimeout(function () {
+          force.stop();
+        }, 2000);
       });
 
       function tick() {
@@ -75,6 +81,9 @@ var Visualizer = (function () {
 
       function dragStart(f) {
         //d3.select(this).classed("fixed", f.fixed = true);
+        setTimeout(function () {
+          force.stop();
+        }, 1000);
       }
     }
   }]);
@@ -82,5 +91,5 @@ var Visualizer = (function () {
   return Visualizer;
 })();
 
-var visuals = new Visualizer(1200, 700);
+var visuals = new Visualizer(1200, 500);
 visuals.run();

@@ -9,7 +9,7 @@ class Visualizer {
     // Force Setup
     var force = d3.layout.force()
     .size([this.width, this.height])
-    .charge(-40)
+    .charge(-500)
     .linkDistance(60)
     .on("tick", tick);
 
@@ -49,7 +49,7 @@ class Visualizer {
       // Adding Nodes to Visualization
       node = node.data(graph.nodes)
       .enter().append("circle")
-      .attr("class", "node")
+      .attr("class", function(d) {return (d.group + " node");})
       .attr("r", 12)
       //.on("dblclick", doubleClick)
       .call(drag);
@@ -59,9 +59,9 @@ class Visualizer {
       .attr("x", 12)
       .attr("y", "20")
       .text(function(d) {
-        return d.name });
+        return d.name;});
 
-
+        setTimeout(function(){force.stop()}, 2000);
 
       });
 
@@ -81,12 +81,11 @@ class Visualizer {
 
       function dragStart(f) {
         //d3.select(this).classed("fixed", f.fixed = true);
+        setTimeout(function(){force.stop()}, 1000);
       }
   }
 
-
-
 }
 
-let visuals = new Visualizer(1200, 700);
+let visuals = new Visualizer(1200, 500);
 visuals.run();

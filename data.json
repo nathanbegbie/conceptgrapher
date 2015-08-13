@@ -1,10 +1,12 @@
 {
   "nodes": [
-    {"x": 600, "y": 350, "fixed": true, "name": "a", "group": 1},
+    {"name": "a", "group": 1},
     {"name": "b", "group": 2},
     {"name": "c", "group": 3},
     {"name": "d", "group": 4},
-    {"name": "e", "group": 5}
+    {"name": "f", "group": 5},
+    {"name": "g", "group": 5},
+    {"name": "h", "group": 5}
   ],
   "links": [
     {"source":  0, "target":  1},
@@ -12,6 +14,9 @@
     {"source":  2, "target":  1},
     {"source":  2, "target":  0},
     {"source":  3, "target":  2},
-    {"source":  4, "target":  1}
+    {"source":  4, "target":  3},
+    {"source":  4, "target":  5},
+    {"source":  5, "target":  3},
+    {"source":  6, "target":  3}
   ]
 }
