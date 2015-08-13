@@ -9,9 +9,10 @@ class Graph(object):
 
 # group should be subclass :(
 
-    def __init__(self, nodes={}, edges={}):
+    def __init__(self, nodes={}, edges={}, groups={}):
         self.nodeDict = nodes
         self.edgeDict = edges
+        self.groupDict = groups
         self.numNodes = len(self.nodeDict)
 
     # need add_group_node etc? The node itself will be the correct node type
@@ -29,6 +30,13 @@ class Graph(object):
     def remove_edge(self, edge):
         if self.edgeDict[edge.nodeFrom.ID]:
             del self.edgeDict[edge.nodeFrom.ID]
+
+    def add_group(self, group):
+        self.groupDict[group.groupID] = group
+
+    def remove_group(self, group):
+        if self.groupDict[group.groupID]:
+            del self.groupDict[group.groupID]
 
     def export(self, filename):
         # export the graph to JSON file
