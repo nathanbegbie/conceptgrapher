@@ -136,6 +136,7 @@ var Visualizer = (function () {
             $("#groups").append(add);
             $("#groups").delegate(".group", "click", function () {
               var value = $(this).attr("value");
+              $("body").find(".node").css("fill", "#EEEEEE");
               $("body").find("." + value).css("fill", "#" + num() + num() + num());
             });
           }
