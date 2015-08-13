@@ -52,6 +52,43 @@ var Visualizer = (function () {
           return d.name;
         });
 
+        //var send = (graph.nodes).filter(unique);
+        /*var send = $.grep(graph.nodes, function(curr, i) {
+          return $.inArray(curr, graph.nodes) == i;
+        }) */
+
+        // Calculating unique group numbers
+        var uniqueGroup = [];
+
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
+
+        try {
+          for (var _iterator = graph.nodes[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var i = _step.value;
+
+            if (uniqueGroup.indexOf(i.group) === -1) {
+              uniqueGroup.push(i.group);
+            }
+          }
+        } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion && _iterator["return"]) {
+              _iterator["return"]();
+            }
+          } finally {
+            if (_didIteratorError) {
+              throw _iteratorError;
+            }
+          }
+        }
+
+        createButtons(uniqueGroup);
+
         setTimeout(function () {
           force.stop();
         }, 2000);
@@ -85,11 +122,47 @@ var Visualizer = (function () {
           force.stop();
         }, 1000);
       }
+
+      function createButtons(groups) {
+        var _iteratorNormalCompletion2 = true;
+        var _didIteratorError2 = false;
+        var _iteratorError2 = undefined;
+
+        try {
+          for (var _iterator2 = groups[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+            var i = _step2.value;
+
+            var add = $("<button class=\"group\" value=" + i + ">Group " + i + "</button>");
+            $("#groups").append(add);
+            $("#groups").delegate(".group", "click", function () {
+              var value = $(this).attr("value");
+              $("body").find("." + value).css("fill", "#" + num() + num() + num());
+            });
+          }
+        } catch (err) {
+          _didIteratorError2 = true;
+          _iteratorError2 = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion2 && _iterator2["return"]) {
+              _iterator2["return"]();
+            }
+          } finally {
+            if (_didIteratorError2) {
+              throw _iteratorError2;
+            }
+          }
+        }
+      }
+
+      function num() {
+        return Math.floor(Math.random() * 256).toString(16);
+      }
     }
   }]);
 
   return Visualizer;
 })();
 
-var visuals = new Visualizer(1200, 500);
+var visuals = new Visualizer($(window).width() - 300, $(window).height() - 20);
 visuals.run();

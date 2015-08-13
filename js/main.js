@@ -61,7 +61,23 @@ class Visualizer {
       .text(function(d) {
         return d.name;});
 
-        setTimeout(function(){force.stop()}, 2000);
+      //var send = (graph.nodes).filter(unique);
+      /*var send = $.grep(graph.nodes, function(curr, i) {
+        return $.inArray(curr, graph.nodes) == i;
+      }) */
+
+      // Calculating unique group numbers
+      var uniqueGroup = [];
+
+      for (var i of graph.nodes) {
+        if(uniqueGroup.indexOf(i.group) === -1) {
+          uniqueGroup.push(i.group);
+        }
+      }
+
+      createButtons(uniqueGroup);
+
+      setTimeout(function(){force.stop()}, 2000);
 
       });
 
@@ -83,9 +99,24 @@ class Visualizer {
         //d3.select(this).classed("fixed", f.fixed = true);
         setTimeout(function(){force.stop()}, 1000);
       }
+
+      function createButtons(groups) {
+        for (var i of groups) {
+          var add = $(`<button class="group" value=${i}>Group ${i}</button>`);
+          $("#groups").append(add);
+          $("#groups").delegate(".group","click",function() {
+            var value = $(this).attr("value");
+            $("body").find("." + value).css("fill", "#"+num()+num()+num());
+          });
+        }
+      }
+
+      function num() {
+        return Math.floor(Math.random()*256).toString(16);
+      }
   }
 
 }
 
-let visuals = new Visualizer(1200, 500);
+let visuals = new Visualizer($(window).width() - 300, $(window).height() - 20);
 visuals.run();
