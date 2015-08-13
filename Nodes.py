@@ -32,11 +32,10 @@ Attributes
     content: a string containing the content of the fact
     """
 
-    def __init__(self, ID, label, content):
+    def __init__(self, ID, content):
         """Return a Node object with name *name* and label *label*"""
         # super?
         self.ID = ID
-        self.label = label
         self.content = content
 
 
@@ -47,10 +46,9 @@ class MisconNode(Node):
     content: a string containing the content of the misconception
     """
 
-    def __init__(self, ID, label, content):
+    def __init__(self, ID, content):
         """Return a Node object with name *name* and label *label*"""
         self.ID = ID
-        self.label = label
         self.content = content
 
 
@@ -61,10 +59,9 @@ class ScaseNode(Node):
     content: a string containing the content of the scase
     """
 
-    def __init__(self, ID, label, content):
+    def __init__(self, ID, content):
         """Return a Node object with name *name* and label *label*"""
         self.ID = ID
-        self.label = label
         self.content = content
 
 
@@ -75,8 +72,7 @@ class ConceptNode(Node):
     content: a string containing the content of the concept
     """
 
-    def __init__(self, ID, label, content):
+    def __init__(self, ID, content):
         """Return a Node object with name *name* and label *label*"""
         self.ID = ID
-        self.label = label
         self.content = content
