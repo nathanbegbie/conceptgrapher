@@ -9,9 +9,9 @@ class Graph(object):
 
 # group should be subclass :(
 
-    def __init__(self, nodes={}, edges={}, groups={}):
+    def __init__(self, nodes={}, edges=[], groups={}):
         self.nodeDict = nodes
-        self.edgeDict = edges
+        self.edgeArray = edges
         self.groupDict = groups
         self.numNodes = len(self.nodeDict)
 
@@ -25,11 +25,14 @@ class Graph(object):
             del self.nodeDict[node.ID]
 
     def add_edge(self, edge):
-        self.edgeDict[edge.nodeFrom.ID] = edge
+        self.edgeArray.append(edge)
 
-    def remove_edge(self, edge):
-        if self.edgeDict[edge.nodeFrom.ID]:
-            del self.edgeDict[edge.nodeFrom.ID]
+    def remove_edge(self, sourceID, targetID):
+        for i in range(0, len(self.edgeArray)):
+            if ((self.edgeArray[i].source == sourceID) and
+                    (self.edgeArray[i].target == targetID)):
+                del self.edgeArray[i]
+                break
 
     def add_group(self, group):
         self.groupDict[group.groupID] = group

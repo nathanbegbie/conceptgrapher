@@ -7,7 +7,8 @@ class TestGraph:
     def test_empty_graph_creation(self):
         test_graph = Graph()
         assert test_graph.nodeDict == {}
-        assert test_graph.edgeDict == {}
+        assert test_graph.edgeArray == []
+        assert test_graph.groupDict == {}
 
     def test_graph_creation_with_node(self):
         test_node = Node("id1234", "test label")
@@ -16,12 +17,10 @@ class TestGraph:
         assert test_graph.nodeDict == {"id1234": test_node}
 
     def test_graph_creation_with_edge(self):
-        nFrom = Node("idFrom", "from label")
-        nTo = Node("idTo", "to label")
-        test_edge = Edge(nFrom, nTo)
-        edge_dict = {test_edge.nodeFrom.ID: test_edge}
-        test_graph = Graph(edges=edge_dict)
-        assert test_graph.edgeDict == {"idFrom": test_edge}
+        test_edge = Edge('1234', '5678')
+        edge_array = [test_edge]
+        test_graph = Graph(edges=edge_array)
+        assert test_graph.edgeArray == edge_array
 
     def test_node_addition(self):
         test_node = Node("id1234", "test label")
@@ -38,22 +37,15 @@ class TestGraph:
         assert test_node1 not in test_graph.nodeDict
 
     def test_edge_addition(self):
-        nFrom = Node("idFrom", "from label")
-        nTo = Node("idTo", "to label")
-        test_edge = Edge(nFrom, nTo)
         test_graph = Graph()
+        test_edge = Edge('1234', '5678')
         test_graph.add_edge(test_edge)
-        assert test_graph.edgeDict["idFrom"] == test_edge
+        assert test_edge in test_graph.edgeArray
 
     def test_edge_removal(self):
-        test_node1a = Node("id1234a", "test label 1a")
-        test_node1b = Node("id1234b", "test label 1b")
-        test_node2a = Node("id5678a", "test label 2a")
-        test_node2b = Node("id5678a", "test label 2b")
-        test_edge1 = Edge(test_node1a, test_node1b)
-        test_edge2 = Edge(test_node2a, test_node2b)
-        edge_dict = {test_edge1.nodeFrom.ID: test_edge1,
-                     test_edge2.nodeFrom.ID: test_edge2}
-        test_graph = Graph(edges=edge_dict)
-        test_graph.remove_edge(test_edge1)
-        assert test_edge1 not in test_graph.edgeDict
+        test_edge1 = Edge("id1234a", "id1234b")
+        test_edge2 = Edge("id5678a", "id5678a")
+        edge_array = [test_edge1, test_edge2]
+        test_graph = Graph(edges=edge_array)
+        test_graph.remove_edge("id1234a", "id1234b")
+        assert test_edge1 not in test_graph.edgeArray
