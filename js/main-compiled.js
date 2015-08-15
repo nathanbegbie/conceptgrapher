@@ -27,35 +27,20 @@ var Visualizer = (function () {
 
       d3.json("data.json", function (error, graph) {
 
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
 
+        // Adding links and nodes to visualization
         force.nodes(graph.nodes).links(graph.links).friction(0.2).start();
 
-        /*
-        for(var i = 0; i < 100; i++) {
-          force.tick();
-        }
-         force.stop();
-        */
-
-        // Adding Links to Visualization
+        // Adding links to SVG
         link = link.data(graph.links).enter().append("line").attr("class", "link");
 
-        // Adding Nodes to Visualization
+        // Adding nodes to SVG
         node = node.data(graph.nodes).enter().append("circle").attr("class", function (d) {
           return d.group + " node";
-        }).attr("r", 12)
-        //.on("dblclick", doubleClick)
-        .call(drag);
-
-        node.append("svg:text").attr("class", "text").attr("x", 12).attr("y", "20").text(function (d) {
-          return d.name;
-        });
-
-        //var send = (graph.nodes).filter(unique);
-        /*var send = $.grep(graph.nodes, function(curr, i) {
-          return $.inArray(curr, graph.nodes) == i;
-        }) */
+        }).attr("r", 12).call(drag);
 
         // Calculating unique group numbers
         var uniqueGroup = [];
@@ -94,6 +79,8 @@ var Visualizer = (function () {
         }, 2000);
       });
 
+      // D3 helper methods
+
       function tick() {
         link.attr("x1", function (f) {
           return f.source.x;
@@ -117,7 +104,6 @@ var Visualizer = (function () {
       }
 
       function dragStart(f) {
-        //d3.select(this).classed("fixed", f.fixed = true);
         setTimeout(function () {
           force.stop();
         }, 1000);
