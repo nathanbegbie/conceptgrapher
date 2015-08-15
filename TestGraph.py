@@ -7,7 +7,7 @@ class TestGraph:
     def test_empty_graph_creation(self):
         test_graph = Graph()
         assert test_graph.nodeDict == {}
-        assert test_graph.edgeArray == []
+        assert test_graph.edgeDict == {}
         assert test_graph.groupDict == {}
 
     def test_graph_creation_with_node(self):
@@ -18,9 +18,11 @@ class TestGraph:
 
     def test_graph_creation_with_edge(self):
         test_edge = Edge('1234', '5678')
-        edge_array = [test_edge]
-        test_graph = Graph(edges=edge_array)
-        assert test_graph.edgeArray == edge_array
+        edge_dict = {test_edge.source: test_edge}
+        test_graph = Graph(edges=edge_dict)
+        assert test_graph.edgeDict == edge_dict
+        assert test_graph.edgeDict['1234'] == test_edge
+        assert test_graph.edgeDict['1234'].targets == ['5678']
 
     def test_node_addition(self):
         test_node = Node("id1234", "test label")
@@ -36,16 +38,36 @@ class TestGraph:
         test_graph.remove_node(test_node1)
         assert test_node1 not in test_graph.nodeDict
 
+    def test_edge_removal(self):
+        test_graph1 = Graph()
+        assert test_graph1.edgeDict == {}
+        test_graph1.add_edge('1234', '5678')
+        test_graph1.add_edge('1234', 'abc')
+        test_graph1.add_edge('foo', 'bar')
+        assert '1234' in test_graph1.edgeDict
+        assert test_graph1.edgeDict['1234'].targets == ['5678', 'abc']
+        test_graph1.remove_edge("1234", "5678")
+        assert '1234' in test_graph1.edgeDict
+        assert test_graph1.edgeDict['1234'].targets == ['abc']
+        test_graph1.remove_edge("1234", "abc")
+        assert '1234' not in test_graph1.edgeDict
+        assert 'foo' in test_graph1.edgeDict
+        # test source is not there - no error
+        test_graph1.remove_edge("nonexistant", "5678")
+        # test destination is not there - no error
+        test_graph1.remove_edge("foo", "nonexistant")
+
+        test_graph1.remove_edge('foo', 'bar')
+        assert 'foo' not in test_graph1.edgeDict
+        assert test_graph1.edgeDict == {}
+
     def test_edge_addition(self):
         test_graph = Graph()
-        test_edge = Edge('1234', '5678')
-        test_graph.add_edge(test_edge)
-        assert test_edge in test_graph.edgeArray
-
-    def test_edge_removal(self):
-        test_edge1 = Edge("id1234a", "id1234b")
-        test_edge2 = Edge("id5678a", "id5678a")
-        edge_array = [test_edge1, test_edge2]
-        test_graph = Graph(edges=edge_array)
-        test_graph.remove_edge("id1234a", "id1234b")
-        assert test_edge1 not in test_graph.edgeArray
+        test_graph.add_edge('1234', '5678')
+        test_graph.add_edge('1234', 'abc')
+        test_graph.add_edge('foo', 'bar')
+        assert '1234' in test_graph.edgeDict
+        assert 'foo' in test_graph.edgeDict
+        assert test_graph.edgeDict['1234'].targets == ['5678', 'abc']
+        assert test_graph.edgeDict['foo'].targets == ['bar']
+        del test_graph

@@ -1,3 +1,6 @@
+from Edge import Edge
+
+
 class Graph(object):
     """A graph of nodes and edges
 
@@ -9,9 +12,9 @@ class Graph(object):
 
 # group should be subclass :(
 
-    def __init__(self, nodes={}, edges=[], groups={}):
+    def __init__(self, nodes={}, edges={}, groups={}):
         self.nodeDict = nodes
-        self.edgeArray = edges
+        self.edgeDict = edges
         self.groupDict = groups
         self.numNodes = len(self.nodeDict)
 
@@ -24,15 +27,26 @@ class Graph(object):
         if self.nodeDict[node.ID]:
             del self.nodeDict[node.ID]
 
-    def add_edge(self, edge):
-        self.edgeArray.append(edge)
+    def add_edge(self, sourceID, targetID):
+        # check if edge exists
+        if sourceID in self.edgeDict:
+            self.edgeDict[sourceID].targets.append(targetID)
+        else:
+            self.edgeDict[sourceID] = Edge(sourceID, targetID)
 
     def remove_edge(self, sourceID, targetID):
-        for i in range(0, len(self.edgeArray)):
-            if ((self.edgeArray[i].source == sourceID) and
-                    (self.edgeArray[i].target == targetID)):
-                del self.edgeArray[i]
-                break
+        # check source exists
+        if sourceID in self.edgeDict:
+            # check that source has the code
+            if targetID in self.edgeDict[sourceID].targets:
+                self.edgeDict[sourceID].targets.remove(targetID)
+                if len(self.edgeDict[sourceID].targets) == 0:
+                    print "deleting"
+                    del self.edgeDict[sourceID]
+            else:
+                print "Target does not exist"
+        else:
+            print "Source does not exist"
 
     def add_group(self, group):
         self.groupDict[group.groupID] = group
