@@ -1,12 +1,12 @@
 {
   "nodes": [
-    {"name": "a", "group": 1},
-    {"name": "b", "group": 2},
-    {"name": "c", "group": 3},
-    {"name": "d", "group": 4},
-    {"name": "f", "group": 5},
-    {"name": "g", "group": 5},
-    {"name": "h", "group": 5}
+    {"name": "a", "group": [1,2]},
+    {"name": "b", "group": [2]},
+    {"name": "c", "group": [3]},
+    {"name": "d", "group": [4,5]},
+    {"name": "f", "group": [5]},
+    {"name": "g", "group": [5,3]},
+    {"name": "h", "group": [5]}
   ],
   "links": [
     {"source":  0, "target":  1},

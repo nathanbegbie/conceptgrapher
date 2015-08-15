@@ -43,7 +43,7 @@ class Visualizer {
       // Adding nodes to SVG
       node = node.data(graph.nodes)
         .enter().append("circle")
-        .attr("class", function(d) {return (d.group + " node");})
+        .attr("class", f => {return (f.group.join(" ") + " node");})
         .attr("r", 12)
         .call(drag);
 
@@ -51,8 +51,11 @@ class Visualizer {
       var uniqueGroup = [];
 
       for (var i of graph.nodes) {
-        if(uniqueGroup.indexOf(i.group) === -1) {
-          uniqueGroup.push(i.group);
+        var group = i.group;
+        for (var j of group) {
+          if(uniqueGroup.indexOf(j) === -1) {
+            uniqueGroup.push(j);
+          }
         }
       }
 
