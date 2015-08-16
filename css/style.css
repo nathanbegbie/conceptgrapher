@@ -1,0 +1,41 @@
+body {
+  font: 20px arial;
+}
+
+.link {
+  stroke: #000;
+  stroke-width: 1.5px;
+}
+
+.node {
+  cursor: move;
+  fill: #EEEEEE;
+  stroke: #000;
+  stroke-width: 2px;
+}
+
+.node.fixed {
+  fill: #15ED41;
+}
+
+.group {
+  float: center;
+}
+
+#groups {
+  float: right;
+  width: 250px;
+}
+
+text {
+  font: 10px sans-serif;
+  font-weight: normal;
+  stroke: #000000;
+  stroke-width: .5;
+}
+
+svg {
+  border-style: solid;
+  border-width: 2px;
+  border-color: #000000;
+}
