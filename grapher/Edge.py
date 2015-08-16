@@ -16,6 +16,7 @@ class Edge(object):
         thickness: thickness of line in visualisation
     """
 
-    def __init__(self, nodeFrom, nodeTo):
-        self.nodeFrom = nodeFrom
-        self.nodeTo = nodeTo
+    def __init__(self, source, targets):
+        self.targets = []
+        self.source = source
+        self.targets.append(targets)
