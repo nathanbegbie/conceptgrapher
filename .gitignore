@@ -1,3 +1,4 @@
 ve/
 *.map
 *.pyc
+*.json

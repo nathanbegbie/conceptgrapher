@@ -4,6 +4,7 @@ from Group import Group
 from Nodes import FactNode, ConceptNode, MisconNode, ScaseNode
 import json
 import random
+from os import pardir, path
 
 
 class Translator:
@@ -18,6 +19,7 @@ class Translator:
             f = open('FinancialMaths.map', 'r')
         except IOError:
             print "file read error"
+            raise SystemExit
 
         # get the first set of the groups
         map_file = f.read()
@@ -74,8 +76,9 @@ class Translator:
         nodes = []
         # iterate through the nodes
         for key, value in graph.nodeDict.iteritems():
+            groups = [str(random.randint(1, 5))]
             nodes.append({"name": value.ID,
-                          "group": str(random.randint(1, 5))})
+                          "group": groups})
 
         print len(nodes)
 
@@ -97,7 +100,13 @@ class Translator:
                             break
                     links.append({"source": i, "target": position})
             else:
-                print "node " + source_id + " has no edges"
+                pass
+                # print "node " + source_id + " has no edges"
         data = {"nodes": nodes, "links": links}
-        with open('data.json', 'w') as outfile:
+
+        # set up correct file directory
+        mypath = path.dirname(path.realpath(__file__))
+        destination_file = (path.join(mypath, pardir) + "/data.json")
+
+        with open(destination_file, 'w') as outfile:
             json.dump(data, outfile)
