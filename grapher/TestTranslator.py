@@ -1,5 +1,5 @@
 from Graph import Graph
-from Nodes import Node, FactNode, ConceptNode, MisconNode, ScaseNode
+from Nodes import *
 from Edge import Edge
 from Translator import Translator
 

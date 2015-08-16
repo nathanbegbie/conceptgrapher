@@ -1,4 +1,4 @@
-from Nodes import Node, FactNode, ConceptNode, MisconNode, ScaseNode
+from Nodes import *
 
 
 class TestNode:
