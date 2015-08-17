@@ -19,6 +19,10 @@ Use
     ctrl + c
 to stop the server hosting the visualization
 
+To run the tests, run the following
+
+py.test grapher/*.py
+
 DISCLAIMER: This code has not been tested on a Windows Machine, only on OSX and Linux- Ubuntu. Please run this code on a unix machine.
 For the above code to run, please ensure that virtualenv and the python-pip package are installed on your machine. They are not installed on the UCT Senior Lab computers and require permission from admin to be installed.
 
