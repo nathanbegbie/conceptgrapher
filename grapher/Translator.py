@@ -3,7 +3,6 @@ from Graph import Graph
 from Group import Group
 from Nodes import FactNode, ConceptNode, MisconNode, ScaseNode
 import json
-import random
 from os import pardir, path
 
 
@@ -55,7 +54,8 @@ class Translator:
             else:
                 print "Unknown data type"
 
-        print graph.numNodes
+        print "number of nodes", graph.numNodes
+        print "number of groups", len(graph.groupDict)
 
         # add the edges
         edge_dict = (re.findall(
@@ -72,13 +72,51 @@ class Translator:
 
         print len(graph.nodeDict)
 
+        # Get the groups
+        group_starts = re.finditer(
+            r'([A-z]{4}\d{3,4}|[A-z]{7}\s?\[.*\]\s?)\s?\{',
+            map_file)
+        # count = 0
+        groups = {}
+        for item in group_starts:
+            # get the name of the group
+            group_names = re.findall(
+                r'[A-z]{4}\d{3,4}|[A-z]{7}',
+                item.group(0))
+            group_name = group_names[0]
+            # set the start position to the pos of the '{'
+            count = item.end()
+            # keep track of brackets until we have a matching number
+            bracket_count = 1
+            while(bracket_count > 0):
+                char = map_file[count]
+                if char == "{":
+                    bracket_count += 1
+                elif char == "}":
+                    bracket_count -= 1
+                else:
+                    pass
+                count += 1
+            # get all of the nodes within the group
+            nodes = re.findall(r'[A-z]{4}\d{3,4}',
+                               map_file[(item.end() - 1):(count + 1)])
+            # get the list of nodes to correspond to the group names
+            groups[group_name] = nodes
+
+        # CREATE THE JSON
         # create the array of node dict
         nodes = []
         # iterate through the nodes
         for key, value in graph.nodeDict.iteritems():
-            groups = [str(random.randint(1, 5))]
+            nodes_groups = []
+            # iterate through each group
+            # see if the node belongs to the group
+            for group in groups:
+                if value.ID in groups[group]:
+                    nodes_groups.append(group)
+
             nodes.append({"name": value.ID,
-                          "group": groups})
+                          "group": nodes_groups})
 
         print len(nodes)
 
