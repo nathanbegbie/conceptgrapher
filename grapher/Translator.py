@@ -147,4 +147,4 @@ class Translator:
         destination_file = (path.join(mypath, pardir) + "/data.json")
 
         with open(destination_file, 'w') as outfile:
-            json.dump(data, outfile)
+            json.dump(data, outfile, indent=2, sort_keys=True)
