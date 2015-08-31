@@ -1,13 +1,10 @@
-from Graph import Graph
-from Nodes import Node
-
 class Cycles:
-        def my_scc(graph):
+    def find_scc(graph):
         index_counter = [0]
-        stack = []
-        lowlinks = {}
-        index = {}
-        result = []
+        stack = []  # stack of Node IDs
+        lowlinks = {}  # to keep track of which nodes have been visited recursively
+        index = {}  # key=NodeID, value=integer
+        result = []  # list of cycles
 
         def strongconnect(nodeID):
             # set the depth index for this node to the smallest unused index
@@ -16,17 +13,17 @@ class Cycles:
             index_counter[0] += 1
             stack.append(nodeID)
 
-            # Consider successors of `node`
+            # visit successors of the node
             for successorID in graph.nodeDict[nodeID].successors.iterkeys():
                 if successorID not in lowlinks:
                     # Successor has not yet been visited; recurse on it
                     strongconnect(successorID)
                     lowlinks[nodeID] = min(lowlinks[nodeID], lowlinks[successorID])
                 elif successorID in stack:
-                    # the successor is in the stack and hence in the current SCC
+                    # the successor is in the stack and so in the current SCC (cycle)
                     lowlinks[nodeID] = min(lowlinks[nodeID], index[successorID])
 
-            # If `node` is a root node, pop the stack and generate an SCC
+            # If the node is a root node, pop the stack and start a SCC
             if lowlinks[nodeID] == index[nodeID]:
                 connected_component = []
 
