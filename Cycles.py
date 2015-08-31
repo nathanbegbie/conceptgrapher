@@ -1,5 +1,5 @@
 class Cycles:
-    def find_scc(graph):
+    def find_scc(self, graph):
         index_counter = [0]
         stack = []  # stack of Node IDs
         lowlinks = {}  # to keep track of which nodes have been visited recursively
