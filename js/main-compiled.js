@@ -16,11 +16,20 @@ var Visualizer = (function () {
     key: "run",
     value: function run() {
       // Force Setup
-      var force = d3.layout.force().size([this.width, this.height]).charge(-500).linkDistance(60).on("tick", tick);
+      var force = cola.d3adaptor().size([this.width, this.height])
+      //.linkDistance(60)
+      .avoidOverlaps(false).symmetricDiffLinkLengths(10).flowLayout('y', 30)
+      //.jaccardLinkLengths(150)
+      .on("tick", tick);
 
       var drag = force.drag().on("dragstart", dragStart);
 
-      var svg = d3.select("body").append("svg").attr("width", this.width).attr("height", this.height);
+      var svg = d3.select("body").append("svg").attr("width", this.width).attr("height", this.height).append("g");
+      //.attr('transform', 'translate(250, 250) scale(0.6)')
+      //.call(d3.behavior.zoom()
+      //  .scaleExtent([0.2, 3])
+      //  .on("zoom", zoom)
+      //);
 
       var link = svg.selectAll(".link");
       var node = svg.selectAll(".node");
@@ -32,7 +41,7 @@ var Visualizer = (function () {
         }
 
         // Adding links and nodes to visualization
-        force.nodes(graph.nodes).links(graph.links).friction(0.2).start();
+        force.nodes(graph.nodes).links(graph.links).start();
 
         // Adding links to SVG
         link = link.data(graph.links).enter().append("line").attr("class", "link");
@@ -98,8 +107,18 @@ var Visualizer = (function () {
 
         createButtons(uniqueGroup);
 
-        setTimeout(function () {
-          force.stop();
+        var routeEdges = function routeEdges() {
+          d3cola.prepareEdgeRouting(margin / 3);
+          link.attr("d", function (d) {
+            return lineFunction(d3cola.routeEdge(d));
+          });
+          if (isIE()) link.each(function (d) {
+            this.parentNode.insertBefore(this, this);
+          });
+        };
+
+        setTimeout(function () {//force.stop();
+          //removeNodes();
         }, 2000);
       });
 
@@ -123,14 +142,16 @@ var Visualizer = (function () {
         });
       }
 
+      function zoom() {
+        svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+      }
+
       function doubleClick(f) {
         d3.select(this).classed("fixed", f.fixed = false);
       }
 
       function dragStart(f) {
-        setTimeout(function () {
-          force.stop();
-        }, 1000);
+        //setTimeout(() => {force.stop();}, 1000);
       }
 
       function createButtons(groups) {
@@ -168,6 +189,13 @@ var Visualizer = (function () {
 
       function num() {
         return Math.floor(Math.random() * 256).toString(16);
+      }
+
+      function removeNodes() {
+        node.splice(1, 1);
+        link.shift();
+        link.pop();
+        start();
       }
     }
   }]);

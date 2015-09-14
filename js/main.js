@@ -6,10 +6,13 @@ class Visualizer {
 
   run() {
     // Force Setup
-    var force = d3.layout.force()
+    var force = cola.d3adaptor()
     .size([this.width, this.height])
-    .charge(-500)
-    .linkDistance(60)
+    //.linkDistance(60)
+    .avoidOverlaps(false)
+    .symmetricDiffLinkLengths(10)
+    .flowLayout('y', 30)
+    //.jaccardLinkLengths(150)
     .on("tick", tick);
 
     var drag = force.drag()
@@ -17,7 +20,13 @@ class Visualizer {
 
     var svg = d3.select("body").append("svg")
     .attr("width", this.width)
-    .attr("height", this.height);
+    .attr("height", this.height)
+    .append("g")
+    //.attr('transform', 'translate(250, 250) scale(0.6)')
+    //.call(d3.behavior.zoom()
+    //  .scaleExtent([0.2, 3])
+    //  .on("zoom", zoom)
+    //);
 
     var link = svg.selectAll(".link");
     var node = svg.selectAll(".node");
@@ -32,7 +41,6 @@ class Visualizer {
       force
         .nodes(graph.nodes)
         .links(graph.links)
-        .friction(0.2)
         .start();
 
       // Adding links to SVG
@@ -61,7 +69,17 @@ class Visualizer {
 
       createButtons(uniqueGroup);
 
-      setTimeout(() => {force.stop();}, 2000);
+      var routeEdges = function () {
+        d3cola.prepareEdgeRouting(margin / 3);
+        link.attr("d", function (d) { return lineFunction(d3cola.routeEdge(d)); });
+        if (isIE()) link.each(function (d) { this.parentNode.insertBefore(this, this) });
+      }
+
+      setTimeout(() => {//force.stop();
+      //removeNodes();
+      }, 2000);
+
+
 
     });
 
@@ -77,12 +95,16 @@ class Visualizer {
         .attr("cy",  f => {return f.y;});
     }
 
+    function zoom() {
+      svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")")
+    }
+
     function doubleClick(f) {
       d3.select(this).classed("fixed", f.fixed = false);
     }
 
     function dragStart(f) {
-      setTimeout(() => {force.stop();}, 1000);
+      //setTimeout(() => {force.stop();}, 1000);
     }
 
     function createButtons(groups) {
@@ -99,6 +121,13 @@ class Visualizer {
 
     function num() {
       return Math.floor(Math.random()*256).toString(16);
+    }
+
+    function removeNodes() {
+      node.splice(1, 1);
+      link.shift();
+      link.pop();
+      start();
     }
   }
 }
