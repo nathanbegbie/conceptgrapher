@@ -2,34 +2,44 @@ class Visualizer {
   constructor(width, height) {
     this.width = width;
     this.height = height;
+    $.getJSON('data.json').done(d => {console.log(d);});
   }
 
   run() {
     // Force Setup
-    var force = cola.d3adaptor()
+    var force = cola.d3adaptor() //.convergenceThreshold(0.01)
     .size([this.width, this.height])
     //.linkDistance(60)
     .avoidOverlaps(false)
-    .symmetricDiffLinkLengths(10)
+    //.symmetricDiffLinkLengths(10)
     .flowLayout('y', 30)
-    //.jaccardLinkLengths(150)
+    .jaccardLinkLengths(50)
     .on("tick", tick);
 
-    var drag = force.drag()
-    .on("dragstart", dragStart);
+    var drag = d3.behavior.drag() //force.drag();
+    //.origin(d =>  {return d;})
+    //.on("dragstart", dragStarting)
+    //.on("drag", dragging)
+    //.on("dragend", dragEnding);
 
     var svg = d3.select("body").append("svg")
     .attr("width", this.width)
     .attr("height", this.height)
-    .append("g")
-    //.attr('transform', 'translate(250, 250) scale(0.6)')
-    //.call(d3.behavior.zoom()
-    //  .scaleExtent([0.2, 3])
-    //  .on("zoom", zoom)
-    //);
+    .call(d3.behavior.zoom().on("zoom", zoom));
 
-    var link = svg.selectAll(".link");
-    var node = svg.selectAll(".node");
+    svg.append("rect")
+    .attr("class", "background")
+    .attr("width", "100%")
+    .attr("height", "100%")
+    .style("fill", "none")
+    .style("pointer-events", "all");
+
+    var visuals = svg.append("g")
+    .attr('transform', 'translate(250, 250) scale(0.3)');
+
+
+    var link = visuals.selectAll(".link");
+    var node = visuals.selectAll(".node");
 
     d3.json("data.json", (error, graph) => {
 
@@ -76,10 +86,9 @@ class Visualizer {
       }
 
       setTimeout(() => {//force.stop();
-      //removeNodes();
+      removeNodes();
+      //addNodes();
       }, 2000);
-
-
 
     });
 
@@ -96,15 +105,25 @@ class Visualizer {
     }
 
     function zoom() {
-      svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")")
+      visuals.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")")
     }
 
     function doubleClick(f) {
       d3.select(this).classed("fixed", f.fixed = false);
     }
 
-    function dragStart(f) {
-      //setTimeout(() => {force.stop();}, 1000);
+    function dragStarting(f) {
+      d3.event.sourceEvent.stopPropagation();
+      d3.select(this).classed("dragging", true);
+      force.start();
+    }
+
+    function dragging(f) {
+      d3.select(this).attr("cx", f.x = d3.event.x).attr("cy", f.y = d3.event.y);
+    }
+
+    function dragEnding(f) {
+      d3.select(this).classed("dragging", false);
     }
 
     function createButtons(groups) {
@@ -124,10 +143,26 @@ class Visualizer {
     }
 
     function removeNodes() {
-      node.splice(1, 1);
-      link.shift();
-      link.pop();
-      start();
+      console.log('Before');
+      console.log(node);
+      node.splice(10, 10);
+      //link.shift();
+      //link.pop();
+      console.log('After');
+      console.log(node);
+
+      var x = visuals.selectAll(".node").data(node);
+
+      x.exit().remove();
+      force.nodes(node);
+
+    }
+
+    function addNodes() {
+      var a = {"name": "TESTING", "group": ["TESTGROUP"]};
+      node.push(a);
+      console.log('TEST');
+      force.start();
     }
   }
 }
