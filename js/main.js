@@ -46,23 +46,22 @@ class Visualizer {
     // now accept a param that chooses what to filter by
     $.getJSON('data.json').done( graph => {
 
-      // for every node check if group in constraint USE JS ARRAY FILTER
-      // if true
-      //    push to node array
-      //    use node index to find all edges
-      //    push edges to edge array
-      // else next
-
       // Setup nodes and edges correctly for D3
       var nodes = {};
       var links = {};
 
-      // Filter nodes based on constraint
+      // Filter nodes based on group constraint
       if (constraint !== null) {
         nodes = graph.nodes.filter( e => {
-          if (constraint.indexOf(e["name"]) >= 0) {
-            return true;
+
+          for (var i of e["group"]) {
+            if (constraint.indexOf(i) >= 0) {
+              return true;
+            }
           }
+
+          return false;
+
         });
       }
       else {
@@ -71,10 +70,11 @@ class Visualizer {
 
       // Filter links based on constrained nodes
       links = graph.links.filter( e => {
-        if (constraint.indexOf(e["source"]) >= 0 && constraint.indexOf(e["target"]) >= 0) {
+        if (search(e["source"], nodes) >= 0 && search(e["target"], nodes) >= 0) {
           return true;
         }
       });
+      console.log(links);
 
       // Update links to use numerical IDs for D3
       for (var i of links) {
@@ -85,23 +85,19 @@ class Visualizer {
       console.log(nodes);
       console.log(links);
 
-      //if(error) {
-      //  throw error;
-    //  }
-
       // Adding links and nodes to visualization
       force
-        .nodes(graph.nodes)
-        .links(graph.links)
+        .nodes(nodes)
+        .links(links)
         .start();
 
       // Adding links to SVG
-      link = link.data(graph.links)
+      link = link.data(links)
         .enter().append("line")
         .attr("class", "link");
 
       // Adding nodes to SVG
-      node = node.data(graph.nodes)
+      node = node.data(nodes)
         .enter().append("circle")
         .attr("class", f => {return (f.group.join(" ") + " node");})
         .attr("r", 12)
@@ -126,11 +122,6 @@ class Visualizer {
         link.attr("d", function (d) { return lineFunction(d3cola.routeEdge(d)); });
         if (isIE()) link.each(function (d) { this.parentNode.insertBefore(this, this) });
       }
-
-      setTimeout(() => {//force.stop();
-      //removeNodes();
-      //addNodes();
-      }, 2000);
 
     });
 
@@ -192,34 +183,11 @@ class Visualizer {
       }
       return -1;
     }
-
-    function removeNodes() {
-      console.log('Before');
-      console.log(node);
-      node.splice(10, 10);
-      //link.shift();
-      //link.pop();
-      console.log('After');
-      console.log(node);
-
-      var x = visuals.selectAll(".node").data(node);
-
-      x.exit().remove();
-      force.nodes(node);
-
-    }
-
-    function addNodes() {
-      var a = {"name": "TESTING", "group": ["TESTGROUP"]};
-      node.push(a);
-      console.log('TEST');
-      force.start();
-    }
   }
 }
 
 let visuals = new Visualizer($(window).width() - 300, $(window).height() - 20);
-visuals.run(["MFIN238", "MFIN132", "MFIN135"]);
+visuals.run(["MFIN014"]);
 
 $(document).ready(() => {
   $(".test").on("click", () => {

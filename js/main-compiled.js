@@ -43,23 +43,42 @@ var Visualizer = (function () {
       // now accept a param that chooses what to filter by
       $.getJSON('data.json').done(function (graph) {
 
-        // for every node check if group in constraint USE JS ARRAY FILTER
-        // if true
-        //    push to node array
-        //    use node index to find all edges
-        //    push edges to edge array
-        // else next
-
         // Setup nodes and edges correctly for D3
         var nodes = {};
         var links = {};
 
-        // Filter nodes based on constraint
+        // Filter nodes based on group constraint
         if (constraint !== null) {
           nodes = graph.nodes.filter(function (e) {
-            if (constraint.indexOf(e["name"]) >= 0) {
-              return true;
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+
+              for (var _iterator = e["group"][Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                var i = _step.value;
+
+                if (constraint.indexOf(i) >= 0) {
+                  return true;
+                }
+              }
+            } catch (err) {
+              _didIteratorError = true;
+              _iteratorError = err;
+            } finally {
+              try {
+                if (!_iteratorNormalCompletion && _iterator["return"]) {
+                  _iterator["return"]();
+                }
+              } finally {
+                if (_didIteratorError) {
+                  throw _iteratorError;
+                }
+              }
             }
+
+            return false;
           });
         } else {
           nodes = graph.nodes;
@@ -67,94 +86,23 @@ var Visualizer = (function () {
 
         // Filter links based on constrained nodes
         links = graph.links.filter(function (e) {
-          if (constraint.indexOf(e["source"]) >= 0 && constraint.indexOf(e["target"]) >= 0) {
+          if (search(e["source"], nodes) >= 0 && search(e["target"], nodes) >= 0) {
             return true;
           }
         });
-
-        // Update links to use numerical IDs for D3
-        var _iteratorNormalCompletion = true;
-        var _didIteratorError = false;
-        var _iteratorError = undefined;
-
-        try {
-          for (var _iterator = links[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var i = _step.value;
-
-            i["source"] = search(i["source"], nodes);
-            i["target"] = search(i["target"], nodes);
-          }
-        } catch (err) {
-          _didIteratorError = true;
-          _iteratorError = err;
-        } finally {
-          try {
-            if (!_iteratorNormalCompletion && _iterator["return"]) {
-              _iterator["return"]();
-            }
-          } finally {
-            if (_didIteratorError) {
-              throw _iteratorError;
-            }
-          }
-        }
-
-        console.log(nodes);
         console.log(links);
 
-        //if(error) {
-        //  throw error;
-        //  }
-
-        // Adding links and nodes to visualization
-        force.nodes(graph.nodes).links(graph.links).start();
-
-        // Adding links to SVG
-        link = link.data(graph.links).enter().append("line").attr("class", "link");
-
-        // Adding nodes to SVG
-        node = node.data(graph.nodes).enter().append("circle").attr("class", function (f) {
-          return f.group.join(" ") + " node";
-        }).attr("r", 12).call(drag);
-
-        // Calculating unique group numbers
-        var uniqueGroup = [];
-
+        // Update links to use numerical IDs for D3
         var _iteratorNormalCompletion2 = true;
         var _didIteratorError2 = false;
         var _iteratorError2 = undefined;
 
         try {
-          for (var _iterator2 = graph.nodes[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+          for (var _iterator2 = links[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
             var i = _step2.value;
 
-            var group = i.group;
-            var _iteratorNormalCompletion3 = true;
-            var _didIteratorError3 = false;
-            var _iteratorError3 = undefined;
-
-            try {
-              for (var _iterator3 = group[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                var j = _step3.value;
-
-                if (uniqueGroup.indexOf(j) === -1) {
-                  uniqueGroup.push(j);
-                }
-              }
-            } catch (err) {
-              _didIteratorError3 = true;
-              _iteratorError3 = err;
-            } finally {
-              try {
-                if (!_iteratorNormalCompletion3 && _iterator3["return"]) {
-                  _iterator3["return"]();
-                }
-              } finally {
-                if (_didIteratorError3) {
-                  throw _iteratorError3;
-                }
-              }
-            }
+            i["source"] = search(i["source"], nodes);
+            i["target"] = search(i["target"], nodes);
           }
         } catch (err) {
           _didIteratorError2 = true;
@@ -171,6 +119,74 @@ var Visualizer = (function () {
           }
         }
 
+        console.log(nodes);
+        console.log(links);
+
+        // Adding links and nodes to visualization
+        force.nodes(nodes).links(links).start();
+
+        // Adding links to SVG
+        link = link.data(links).enter().append("line").attr("class", "link");
+
+        // Adding nodes to SVG
+        node = node.data(nodes).enter().append("circle").attr("class", function (f) {
+          return f.group.join(" ") + " node";
+        }).attr("r", 12).call(drag);
+
+        // Calculating unique group numbers
+        var uniqueGroup = [];
+
+        var _iteratorNormalCompletion3 = true;
+        var _didIteratorError3 = false;
+        var _iteratorError3 = undefined;
+
+        try {
+          for (var _iterator3 = graph.nodes[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+            var i = _step3.value;
+
+            var group = i.group;
+            var _iteratorNormalCompletion4 = true;
+            var _didIteratorError4 = false;
+            var _iteratorError4 = undefined;
+
+            try {
+              for (var _iterator4 = group[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                var j = _step4.value;
+
+                if (uniqueGroup.indexOf(j) === -1) {
+                  uniqueGroup.push(j);
+                }
+              }
+            } catch (err) {
+              _didIteratorError4 = true;
+              _iteratorError4 = err;
+            } finally {
+              try {
+                if (!_iteratorNormalCompletion4 && _iterator4["return"]) {
+                  _iterator4["return"]();
+                }
+              } finally {
+                if (_didIteratorError4) {
+                  throw _iteratorError4;
+                }
+              }
+            }
+          }
+        } catch (err) {
+          _didIteratorError3 = true;
+          _iteratorError3 = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion3 && _iterator3["return"]) {
+              _iterator3["return"]();
+            }
+          } finally {
+            if (_didIteratorError3) {
+              throw _iteratorError3;
+            }
+          }
+        }
+
         createButtons(uniqueGroup);
 
         var routeEdges = function routeEdges() {
@@ -182,11 +198,6 @@ var Visualizer = (function () {
             this.parentNode.insertBefore(this, this);
           });
         };
-
-        setTimeout(function () {//force.stop();
-          //removeNodes();
-          //addNodes();
-        }, 2000);
       });
 
       // D3 helper methods
@@ -232,13 +243,13 @@ var Visualizer = (function () {
       }
 
       function createButtons(groups) {
-        var _iteratorNormalCompletion4 = true;
-        var _didIteratorError4 = false;
-        var _iteratorError4 = undefined;
+        var _iteratorNormalCompletion5 = true;
+        var _didIteratorError5 = false;
+        var _iteratorError5 = undefined;
 
         try {
-          for (var _iterator4 = groups[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-            var i = _step4.value;
+          for (var _iterator5 = groups[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+            var i = _step5.value;
 
             var add = $("<button class=\"group\" value=" + i + ">Group " + i + "</button>");
             $("#groups").append(add);
@@ -249,16 +260,16 @@ var Visualizer = (function () {
             });
           }
         } catch (err) {
-          _didIteratorError4 = true;
-          _iteratorError4 = err;
+          _didIteratorError5 = true;
+          _iteratorError5 = err;
         } finally {
           try {
-            if (!_iteratorNormalCompletion4 && _iterator4["return"]) {
-              _iterator4["return"]();
+            if (!_iteratorNormalCompletion5 && _iterator5["return"]) {
+              _iterator5["return"]();
             }
           } finally {
-            if (_didIteratorError4) {
-              throw _iteratorError4;
+            if (_didIteratorError5) {
+              throw _iteratorError5;
             }
           }
         }
@@ -276,28 +287,6 @@ var Visualizer = (function () {
         }
         return -1;
       }
-
-      function removeNodes() {
-        console.log('Before');
-        console.log(node);
-        node.splice(10, 10);
-        //link.shift();
-        //link.pop();
-        console.log('After');
-        console.log(node);
-
-        var x = visuals.selectAll(".node").data(node);
-
-        x.exit().remove();
-        force.nodes(node);
-      }
-
-      function addNodes() {
-        var a = { "name": "TESTING", "group": ["TESTGROUP"] };
-        node.push(a);
-        console.log('TEST');
-        force.start();
-      }
     }
   }]);
 
@@ -305,7 +294,7 @@ var Visualizer = (function () {
 })();
 
 var visuals = new Visualizer($(window).width() - 300, $(window).height() - 20);
-visuals.run(["MFIN238", "MFIN132", "MFIN135"]);
+visuals.run(["MFIN014"]);
 
 $(document).ready(function () {
   $(".test").on("click", function () {
