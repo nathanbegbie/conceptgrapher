@@ -121,25 +121,11 @@ class Translator:
         print len(nodes)
 
         links = []
-        for i in range(0, len(nodes)):
-            # see if the node has any edges
-            # get the id of the graph, check if it is in the dict of edges
-            source_id = nodes[i]["name"]
+        # add the edges
+        for source in graph.edgeDict:
+            for item in graph.edgeDict[source].targets:
+                links.append({"source": source, "target": item})
 
-            if source_id in graph.edgeDict:
-                # iterate through the list of targets
-                # for each target, get target's position in the nodes array
-                for target_id in graph.edgeDict[source_id].targets:
-                    position = 0
-                    for j in range(0, len(nodes)):
-                        # check if we have found the position of the node
-                        if target_id == nodes[j]["name"]:
-                            position = j
-                            break
-                    links.append({"source": i, "target": position})
-            else:
-                pass
-                # print "node " + source_id + " has no edges"
         data = {"nodes": nodes, "links": links}
 
         # set up correct file directory
