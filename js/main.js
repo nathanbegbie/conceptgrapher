@@ -2,10 +2,9 @@ class Visualizer {
   constructor(width, height) {
     this.width = width;
     this.height = height;
-    $.getJSON('data.json').done(d => {console.log(d);});
   }
 
-  run() {
+  run(constraint) {
     // Force Setup
     var force = cola.d3adaptor() //.convergenceThreshold(0.01)
     .size([this.width, this.height])
@@ -41,11 +40,54 @@ class Visualizer {
     var link = visuals.selectAll(".link");
     var node = visuals.selectAll(".node");
 
-    d3.json("data.json", (error, graph) => {
+    //d3.json("data.json", (error, graph) => {
 
-      if(error) {
-        throw error;
+
+    // now accept a param that chooses what to filter by
+    $.getJSON('data.json').done( graph => {
+
+      // for every node check if group in constraint USE JS ARRAY FILTER
+      // if true
+      //    push to node array
+      //    use node index to find all edges
+      //    push edges to edge array
+      // else next
+
+      // Setup nodes and edges correctly for D3
+      var nodes = {};
+      var links = {};
+
+      // Filter nodes based on constraint
+      if (constraint !== null) {
+        nodes = graph.nodes.filter( e => {
+          if (constraint.indexOf(e["name"]) >= 0) {
+            return true;
+          }
+        });
       }
+      else {
+        nodes = graph.nodes;
+      }
+
+      // Filter links based on constrained nodes
+      links = graph.links.filter( e => {
+        if (constraint.indexOf(e["source"]) >= 0 && constraint.indexOf(e["target"]) >= 0) {
+          return true;
+        }
+      });
+
+      // Update links to use numerical IDs for D3
+      for (var i of links) {
+        i["source"] = search(i["source"], nodes);
+        i["target"] = search(i["target"], nodes);
+      }
+
+      console.log(nodes);
+      console.log(links);
+
+      //if(error) {
+      //  throw error;
+    //  }
 
       // Adding links and nodes to visualization
       force
@@ -86,7 +128,7 @@ class Visualizer {
       }
 
       setTimeout(() => {//force.stop();
-      removeNodes();
+      //removeNodes();
       //addNodes();
       }, 2000);
 
@@ -142,6 +184,15 @@ class Visualizer {
       return Math.floor(Math.random()*256).toString(16);
     }
 
+    function search(name, arr) {
+      for (var i = 0; i < arr.length; i++) {
+        if (arr[i]["name"] === name) {
+          return i;
+        }
+      }
+      return -1;
+    }
+
     function removeNodes() {
       console.log('Before');
       console.log(node);
@@ -168,4 +219,13 @@ class Visualizer {
 }
 
 let visuals = new Visualizer($(window).width() - 300, $(window).height() - 20);
-visuals.run();
+visuals.run(["MFIN238", "MFIN132", "MFIN135"]);
+
+$(document).ready(() => {
+  $(".test").on("click", () => {
+    console.log("Clearing...");
+    d3.select('svg').remove();
+    $("#groups").find("button").remove();
+    visuals.run();
+  });
+});
