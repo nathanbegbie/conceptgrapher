@@ -74,16 +74,12 @@ class Visualizer {
           return true;
         }
       });
-      console.log(links);
 
       // Update links to use numerical IDs for D3
       for (var i of links) {
         i["source"] = search(i["source"], nodes);
         i["target"] = search(i["target"], nodes);
       }
-
-      console.log(nodes);
-      console.log(links);
 
       // Adding links and nodes to visualization
       force
@@ -115,7 +111,8 @@ class Visualizer {
         }
       }
 
-      createButtons(uniqueGroup);
+      //createButtons(uniqueGroup);
+        buildList(uniqueGroup);
 
       var routeEdges = function () {
         d3cola.prepareEdgeRouting(margin / 3);
@@ -157,6 +154,22 @@ class Visualizer {
 
     function dragEnding(f) {
       d3.select(this).classed("dragging", false);
+    }
+
+    function buildList(groups) {
+
+      var options = {
+        valueNames: ['name'],
+        item: '<li><p class="name"></p></li>'
+      };
+
+      var groupList = new List('groups', options);
+      var result = [];
+
+      for (var i of groups) {
+        result.push({name: i});
+      }
+      groupList.add(result);
     }
 
     function createButtons(groups) {

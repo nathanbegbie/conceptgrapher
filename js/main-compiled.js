@@ -90,7 +90,6 @@ var Visualizer = (function () {
             return true;
           }
         });
-        console.log(links);
 
         // Update links to use numerical IDs for D3
         var _iteratorNormalCompletion2 = true;
@@ -104,6 +103,8 @@ var Visualizer = (function () {
             i["source"] = search(i["source"], nodes);
             i["target"] = search(i["target"], nodes);
           }
+
+          // Adding links and nodes to visualization
         } catch (err) {
           _didIteratorError2 = true;
           _iteratorError2 = err;
@@ -119,10 +120,6 @@ var Visualizer = (function () {
           }
         }
 
-        console.log(nodes);
-        console.log(links);
-
-        // Adding links and nodes to visualization
         force.nodes(nodes).links(links).start();
 
         // Adding links to SVG
@@ -172,6 +169,8 @@ var Visualizer = (function () {
               }
             }
           }
+
+          //createButtons(uniqueGroup);
         } catch (err) {
           _didIteratorError3 = true;
           _iteratorError3 = err;
@@ -187,7 +186,7 @@ var Visualizer = (function () {
           }
         }
 
-        createButtons(uniqueGroup);
+        buildList(uniqueGroup);
 
         var routeEdges = function routeEdges() {
           d3cola.prepareEdgeRouting(margin / 3);
@@ -242,7 +241,16 @@ var Visualizer = (function () {
         d3.select(this).classed("dragging", false);
       }
 
-      function createButtons(groups) {
+      function buildList(groups) {
+
+        var options = {
+          valueNames: ['name'],
+          item: '<li><p class="name"></p></li>'
+        };
+
+        var groupList = new List('groups', options);
+
+        var result = [];
         var _iteratorNormalCompletion5 = true;
         var _didIteratorError5 = false;
         var _iteratorError5 = undefined;
@@ -251,13 +259,7 @@ var Visualizer = (function () {
           for (var _iterator5 = groups[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
             var i = _step5.value;
 
-            var add = $("<button class=\"group\" value=" + i + ">Group " + i + "</button>");
-            $("#groups").append(add);
-            $("#groups").delegate(".group", "click", function () {
-              var value = $(this).attr("value");
-              $("body").find(".node").css("fill", "#EEEEEE");
-              $("body").find("." + value).css("fill", "#" + num() + num() + num());
-            });
+            result.push({ name: i });
           }
         } catch (err) {
           _didIteratorError5 = true;
@@ -270,6 +272,49 @@ var Visualizer = (function () {
           } finally {
             if (_didIteratorError5) {
               throw _iteratorError5;
+            }
+          }
+        }
+
+        console.log(result);
+        groupList.add(result);
+        //var add = $(`<li><p class="name">${i}</p></li>`);
+        //$("#groupAdd").append(add);
+        //$("#groups").delegate(".group","click",function() {
+        //var value = $(this).attr("value");
+        //$("body").find(".node").css("fill", "#EEEEEE");
+        //$("body").find("." + value).css("fill", "#"+num()+num()+num());
+        //});
+      }
+
+      function createButtons(groups) {
+        var _iteratorNormalCompletion6 = true;
+        var _didIteratorError6 = false;
+        var _iteratorError6 = undefined;
+
+        try {
+          for (var _iterator6 = groups[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+            var i = _step6.value;
+
+            var add = $("<button class=\"group\" value=" + i + ">Group " + i + "</button>");
+            $("#groups").append(add);
+            $("#groups").delegate(".group", "click", function () {
+              var value = $(this).attr("value");
+              $("body").find(".node").css("fill", "#EEEEEE");
+              $("body").find("." + value).css("fill", "#" + num() + num() + num());
+            });
+          }
+        } catch (err) {
+          _didIteratorError6 = true;
+          _iteratorError6 = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion6 && _iterator6["return"]) {
+              _iterator6["return"]();
+            }
+          } finally {
+            if (_didIteratorError6) {
+              throw _iteratorError6;
             }
           }
         }

@@ -2,15 +2,24 @@
 <meta charset="utf-8">
 <head>
   <link rel="stylesheet" type="text/css" href="css/style.css">
-  <script src="http://marvl.infotech.monash.edu/webcola/cola.v3.min.js"></script>
-  <script src="d3/d3.min.js"></script>
+  <script type="text/javascript" src="js/cola.v3.min.js"></script>
+  <script type="text/javascript" src="d3/d3.min.js"></script>
   <script type="text/javascript" src="data.json"></script>
 </head>
 <body>
   <script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
-  <script type="text/javascript" src="js/main-compiled.js"></script>
+  <script type="text/javascript" src="js/list.min.js"></script>
+
+  <button class="test">Clear</button>
+
   <div id="groups">
     <h1>Groups</h1>
+    <input class="search" placeholder="Search" />
+    <button class="sort" data-sort="name">
+      Sort by Group Name
+    </button>
+    <ul id="groupAdd" class="list">
+    </ul>
   </div>
-  <button class="test">Clear</button>
+  <script type="text/javascript" src="js/main-compiled.js"></script>
 </body>
