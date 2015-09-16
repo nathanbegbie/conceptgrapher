@@ -1,3 +1,6 @@
+
+var groupList;
+
 class Visualizer {
   constructor(width, height) {
     this.width = width;
@@ -163,7 +166,7 @@ class Visualizer {
         item: '<li><p class="name"></p></li>'
       };
 
-      var groupList = new List('groups', options);
+      groupList = new List('groups', options);
       var result = [];
 
       for (var i of groups) {
@@ -200,13 +203,34 @@ class Visualizer {
 }
 
 let visuals = new Visualizer($(window).width() - 300, $(window).height() - 20);
-visuals.run(["MFIN014"]);
+visuals.run(null);
 
+
+// JQuery Events
 $(document).ready(() => {
   $(".test").on("click", () => {
     console.log("Clearing...");
     d3.select('svg').remove();
-    $("#groups").find("button").remove();
-    visuals.run();
+    visuals.run(null);
   });
+});
+
+$(document).on("click", ".name", () => {
+
+  // Move group from selectable to filter
+  var current = $(event.target).text();
+  groupList.remove("name", current);
+  $("body").find("#filter").append(`<li><p class="filtered-by">${current}</p></li>`);
+
+  // Build list of items to filter by
+  var output = [];
+
+  var currentGroups = $(".filtered-by").each( (i, o) => {
+    output.push(o.textContent);
+  });
+
+  // Clear D3 SVG and run with new paramaters
+  d3.select('svg').remove();
+  visuals.run(output);
+
 });

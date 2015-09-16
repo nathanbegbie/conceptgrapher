@@ -4,6 +4,8 @@ var _createClass = (function () { function defineProperties(target, props) { for
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var groupList;
+
 var Visualizer = (function () {
   function Visualizer(width, height) {
     _classCallCheck(this, Visualizer);
@@ -248,9 +250,9 @@ var Visualizer = (function () {
           item: '<li><p class="name"></p></li>'
         };
 
-        var groupList = new List('groups', options);
-
+        groupList = new List('groups', options);
         var result = [];
+
         var _iteratorNormalCompletion5 = true;
         var _didIteratorError5 = false;
         var _iteratorError5 = undefined;
@@ -276,15 +278,7 @@ var Visualizer = (function () {
           }
         }
 
-        console.log(result);
         groupList.add(result);
-        //var add = $(`<li><p class="name">${i}</p></li>`);
-        //$("#groupAdd").append(add);
-        //$("#groups").delegate(".group","click",function() {
-        //var value = $(this).attr("value");
-        //$("body").find(".node").css("fill", "#EEEEEE");
-        //$("body").find("." + value).css("fill", "#"+num()+num()+num());
-        //});
       }
 
       function createButtons(groups) {
@@ -339,13 +333,32 @@ var Visualizer = (function () {
 })();
 
 var visuals = new Visualizer($(window).width() - 300, $(window).height() - 20);
-visuals.run(["MFIN014"]);
+visuals.run(null);
 
+// JQuery Events
 $(document).ready(function () {
   $(".test").on("click", function () {
     console.log("Clearing...");
     d3.select('svg').remove();
-    $("#groups").find("button").remove();
-    visuals.run();
+    visuals.run(null);
   });
+});
+
+$(document).on("click", ".name", function () {
+
+  // Move group from selectable to filter
+  var current = $(event.target).text();
+  groupList.remove("name", current);
+  $("body").find("#filter").append("<li><p class=\"filtered-by\">" + current + "</p></li>");
+
+  // Build list of items to filter by
+  var output = [];
+
+  var currentGroups = $(".filtered-by").each(function (i, o) {
+    output.push(o.textContent);
+  });
+
+  // Clear D3 SVG and run with new paramaters
+  d3.select('svg').remove();
+  visuals.run(output);
 });
