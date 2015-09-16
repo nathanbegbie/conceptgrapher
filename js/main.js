@@ -9,7 +9,7 @@ class Visualizer {
 
   run(constraint, rebuild) {
     // Force Setup
-    var force = cola.d3adaptor() //.convergenceThreshold(0.01)
+    var force = cola.d3adaptor()
     .size([this.width, this.height])
     //.linkDistance(60)
     .avoidOverlaps(false)
@@ -24,7 +24,7 @@ class Visualizer {
     //.on("drag", dragging)
     //.on("dragend", dragEnding);
 
-    var svg = d3.select("body").append("svg")
+    var svg = d3.select("#svg-wrapper").append("svg")
     .attr("width", this.width)
     .attr("height", this.height)
     .call(d3.behavior.zoom().on("zoom", zoom));
@@ -50,12 +50,8 @@ class Visualizer {
     var visuals = svg.append("g")
     .attr('transform', 'translate(250, 250) scale(0.3)');
 
-
     var link = visuals.selectAll(".link");
     var node = visuals.selectAll(".node");
-
-    //d3.json("data.json", (error, graph) => {
-
 
     // now accept a param that chooses what to filter by
     $.getJSON('data.json').done( graph => {
@@ -65,7 +61,7 @@ class Visualizer {
       var links = {};
 
       // Filter nodes based on group constraint
-      if (constraint !== null) {
+      if (constraint !== null && constraint.length > 0) {
         nodes = graph.nodes.filter( e => {
 
           for (var i of e["group"]) {
@@ -113,6 +109,7 @@ class Visualizer {
             return " ";
           }
         });
+
       // size of symbols
       var scaleOfBigSymbols = 6;
       var scaleOfSmallSymbols = 4;
@@ -162,16 +159,9 @@ class Visualizer {
         }
       }
 
-      //createButtons(uniqueGroup);
         if (rebuild === true) {
           buildList(uniqueGroup);
         }
-
-      var routeEdges = function () {
-        d3cola.prepareEdgeRouting(margin / 3);
-        link.attr("d", function (d) { return lineFunction(d3cola.routeEdge(d)); });
-        if (isIE()) link.each(function (d) { this.parentNode.insertBefore(this, this) });
-      }
 
     });
 
@@ -183,9 +173,6 @@ class Visualizer {
         .attr("x2",  f => {return f.target.x;})
         .attr("y2",  f => {return f.target.y;});
 
-      //node.attr("cx",  f => {return f.x;})
-        //.attr("cy",  f => {return f.y;});
-
         node.attr("transform", function (d) {
           return "translate(" + d.x + "," + d.y + ")";
         });
@@ -193,10 +180,6 @@ class Visualizer {
 
     function zoom() {
       visuals.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")")
-    }
-
-    function doubleClick(f) {
-      d3.select(this).classed("fixed", f.fixed = false);
     }
 
     function dragStarting(f) {
@@ -217,7 +200,7 @@ class Visualizer {
 
       var options = {
         valueNames: ['name'],
-        item: '<li><p class="name"></p></li>'
+        item: '<a class="collection-item"><p class="name"></p></a>'
       };
 
       groupList = new List('groups', options);
@@ -227,18 +210,6 @@ class Visualizer {
         result.push({name: i});
       }
       groupList.add(result);
-    }
-
-    function createButtons(groups) {
-      for (var i of groups) {
-        var add = $(`<button class="group" value=${i}>Group ${i}</button>`);
-        $("#groups").append(add);
-        $("#groups").delegate(".group","click",function() {
-          var value = $(this).attr("value");
-          $("body").find(".node").css("fill", "#EEEEEE");
-          $("body").find("." + value).css("fill", "#"+num()+num()+num());
-        });
-      }
     }
 
     function num() {
@@ -261,9 +232,8 @@ class Visualizer {
 
 }
 
-
 // Instantiation of visualizer
-let visuals = new Visualizer($(window).width() - 300, $(window).height() - 20);
+let visuals = new Visualizer($("#svg-wrapper").width(), $(window).height() - 20);
 visuals.run(null, true);
 
 
@@ -272,7 +242,7 @@ $(document).on("click", ".name", () => {
   // Move group from selectable to filter
   var current = $(event.target).text();
   groupList.remove("name", current);
-  $("body").find("#filter").append(`<li><p class="filtered-by">${current}</p></li>`);
+  $("body").find("#filter").append(`<div class="chip"><span class="filtered-by">${current}</span><i class="material-icons close-filter">close</i></div>`);
 
   // Build list of items to filter by
   var output = [];
@@ -285,4 +255,25 @@ $(document).on("click", ".name", () => {
   visuals.clear();
   visuals.run(output, false);
 
+});
+
+$(document).on("click", ".close-filter", () => {
+  // Get removed group
+  var current = $(event.target).parent().find('span').text();
+
+  // Add back to list
+  groupList.add([{name: current}]);
+
+  // Build list of items to filter by
+  var output = [];
+
+  var currentGroups = $(".filtered-by").each( (i, o) => {
+    output.push(o.textContent);
+  });
+  
+  output.splice(output.indexOf(current), 1);
+
+  // Clear D3 SVG and run with new paramaters
+  visuals.clear();
+  visuals.run(output, false);
 });

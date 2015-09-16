@@ -19,22 +19,32 @@
   <script type="text/javascript" src="js/list.min.js"></script>
   <script type="text/javascript" src="js/materialize.min.js"></script>
 
-  <button class="test">Clear</button>
 
-  <div id="groups">
-    <h1>Groups</h1>
-    <input class="search" placeholder="Search" />
-    <button class="sort" data-sort="name">
-      Sort by Group Name
-    </button>
-    <ul id="groupAdd" class="list">
-    </ul>
-  </div>
-  <script type="text/javascript" src="js/main-compiled.js"></script>
-
-  <div>
-    <h3>Filtering by</h3>
-    <ul id="filter">
-    </ul>
+  <div class="row">
+    <div class="col s9" id="svg-wrapper">
+    </div>
+    <div class="col s3">
+      <div id="group-wrapper" class="card-panel">
+        <div id="groups">
+          <div class="input-field">
+            <!--<i class="material-icons prefix">search</i>-->
+            <input class="search" type="text"/>
+            <label>Search</label>
+          </div>
+          <div id="groups-scroll">
+            <div class="group-scroll">
+              <div id="groupAdd" class="list collection">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Needs to be here for List.js to run -->
+      <script type="text/javascript" src="js/main-compiled.js"></script>
+      <div id="filter-wrapper" class="card-panel">
+        <ul id="filter">
+        </ul>
+      </div>
+    </div>
   </div>
 </body>

@@ -2,6 +2,28 @@ body {
   font: 20px arial;
 }
 
+li {
+  padding: 0px;
+  margin: 0px;
+}
+
+p {
+  margin: 0px;
+}
+
+a {
+  cursor: hand;
+  cursor: pointer;
+}
+
+.chip {
+  margin: 3px;
+}
+
+.input-field {
+  margin-top: 0px;
+}
+
 .link.undirected {
   stroke:#595656;
   stroke-width: 3px;
@@ -27,10 +49,15 @@ body {
   color: #FFFFFF;
 }
 
-#groups {
-  float: right;
-  width: 250px;
+#group-wrapper {
+  margin-top: 18px;
 }
+
+#groups-scroll {
+  height: 300px;
+  overflow-y: auto;
+}
+
 
 text {
   font: 10px sans-serif;
@@ -39,15 +66,25 @@ text {
   stroke-width: .5;
 }
 
-svg {
-  border-style: solid;
-  border-width: 2px;
-  border-color: #000000;
+.row {
+  padding-bottom: 0px;
+  margin-bottom: 0px;
 }
 
-.svgClass{
+.svgClass {
   background-color: #eee;
 }
+
+#svg-wrapper {
+  height: 100%;
+}
+
+#filter-wrapper {
+  margin-top: 20px;
+  overflow-y: scroll;
+  height: 200px;
+}
+
 .nodetext {
   pointer-events: none;
   font: 10px sans-serif;

@@ -20,8 +20,7 @@ var Visualizer = (function () {
     key: "run",
     value: function run(constraint, rebuild) {
       // Force Setup
-      var force = cola.d3adaptor() //.convergenceThreshold(0.01)
-      .size([this.width, this.height])
+      var force = cola.d3adaptor().size([this.width, this.height])
       //.linkDistance(60)
       .avoidOverlaps(false)
       //.symmetricDiffLinkLengths(10)
@@ -33,7 +32,7 @@ var Visualizer = (function () {
       //.on("drag", dragging)
       //.on("dragend", dragEnding);
 
-      var svg = d3.select("body").append("svg").attr("width", this.width).attr("height", this.height).call(d3.behavior.zoom().on("zoom", zoom));
+      var svg = d3.select("#svg-wrapper").append("svg").attr("width", this.width).attr("height", this.height).call(d3.behavior.zoom().on("zoom", zoom));
 
       //create a placeholder for the shape of the arrowhead
       svg.append("defs").append("marker").attr("id", "arrowhead").attr("refX", 20).attr("refY", 2).attr("markerWidth", 6).attr("markerHeight", 4).attr("orient", "auto").append("path").attr("d", "M 0,0 V 4 L6,2 Z"); //this is actual shape for arrowhead
@@ -45,8 +44,6 @@ var Visualizer = (function () {
       var link = visuals.selectAll(".link");
       var node = visuals.selectAll(".node");
 
-      //d3.json("data.json", (error, graph) => {
-
       // now accept a param that chooses what to filter by
       $.getJSON('data.json').done(function (graph) {
 
@@ -55,7 +52,7 @@ var Visualizer = (function () {
         var links = {};
 
         // Filter nodes based on group constraint
-        if (constraint !== null) {
+        if (constraint !== null && constraint.length > 0) {
           nodes = graph.nodes.filter(function (e) {
             var _iteratorNormalCompletion = true;
             var _didIteratorError = false;
@@ -139,6 +136,7 @@ var Visualizer = (function () {
             return " ";
           }
         });
+
         // size of symbols
         var scaleOfBigSymbols = 6;
         var scaleOfSmallSymbols = 4;
@@ -201,8 +199,6 @@ var Visualizer = (function () {
               }
             }
           }
-
-          //createButtons(uniqueGroup);
         } catch (err) {
           _didIteratorError3 = true;
           _iteratorError3 = err;
@@ -221,16 +217,6 @@ var Visualizer = (function () {
         if (rebuild === true) {
           buildList(uniqueGroup);
         }
-
-        var routeEdges = function routeEdges() {
-          d3cola.prepareEdgeRouting(margin / 3);
-          link.attr("d", function (d) {
-            return lineFunction(d3cola.routeEdge(d));
-          });
-          if (isIE()) link.each(function (d) {
-            this.parentNode.insertBefore(this, this);
-          });
-        };
       });
 
       // D3 helper methods
@@ -246,9 +232,6 @@ var Visualizer = (function () {
           return f.target.y;
         });
 
-        //node.attr("cx",  f => {return f.x;})
-        //.attr("cy",  f => {return f.y;});
-
         node.attr("transform", function (d) {
           return "translate(" + d.x + "," + d.y + ")";
         });
@@ -256,10 +239,6 @@ var Visualizer = (function () {
 
       function zoom() {
         visuals.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
-      }
-
-      function doubleClick(f) {
-        d3.select(this).classed("fixed", f.fixed = false);
       }
 
       function dragStarting(f) {
@@ -280,7 +259,7 @@ var Visualizer = (function () {
 
         var options = {
           valueNames: ['name'],
-          item: '<li><p class="name"></p></li>'
+          item: '<a class="collection-item"><p class="name"></p></a>'
         };
 
         groupList = new List('groups', options);
@@ -314,39 +293,6 @@ var Visualizer = (function () {
         groupList.add(result);
       }
 
-      function createButtons(groups) {
-        var _iteratorNormalCompletion6 = true;
-        var _didIteratorError6 = false;
-        var _iteratorError6 = undefined;
-
-        try {
-          for (var _iterator6 = groups[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
-            var i = _step6.value;
-
-            var add = $("<button class=\"group\" value=" + i + ">Group " + i + "</button>");
-            $("#groups").append(add);
-            $("#groups").delegate(".group", "click", function () {
-              var value = $(this).attr("value");
-              $("body").find(".node").css("fill", "#EEEEEE");
-              $("body").find("." + value).css("fill", "#" + num() + num() + num());
-            });
-          }
-        } catch (err) {
-          _didIteratorError6 = true;
-          _iteratorError6 = err;
-        } finally {
-          try {
-            if (!_iteratorNormalCompletion6 && _iterator6["return"]) {
-              _iterator6["return"]();
-            }
-          } finally {
-            if (_didIteratorError6) {
-              throw _iteratorError6;
-            }
-          }
-        }
-      }
-
       function num() {
         return Math.floor(Math.random() * 256).toString(16);
       }
@@ -370,7 +316,7 @@ var Visualizer = (function () {
   return Visualizer;
 })();
 
-var visuals = new Visualizer($(window).width() - 300, $(window).height() - 20);
+var visuals = new Visualizer($("#svg-wrapper").width(), $(window).height() - 20);
 visuals.run(null, true);
 
 $(document).on("click", ".name", function () {
@@ -378,7 +324,7 @@ $(document).on("click", ".name", function () {
   // Move group from selectable to filter
   var current = $(event.target).text();
   groupList.remove("name", current);
-  $("body").find("#filter").append("<li><p class=\"filtered-by\">" + current + "</p></li>");
+  $("body").find("#filter").append("<div class=\"chip\"><span class=\"filtered-by\">" + current + "</span><i class=\"material-icons close-filter\">close</i></div>");
 
   // Build list of items to filter by
   var output = [];
@@ -386,6 +332,27 @@ $(document).on("click", ".name", function () {
   var currentGroups = $(".filtered-by").each(function (i, o) {
     output.push(o.textContent);
   });
+
+  // Clear D3 SVG and run with new paramaters
+  visuals.clear();
+  visuals.run(output, false);
+});
+
+$(document).on("click", ".close-filter", function () {
+  // Get removed group
+  var current = $(event.target).parent().find('span').text();
+
+  // Add back to list
+  groupList.add([{ name: current }]);
+
+  // Build list of items to filter by
+  var output = [];
+
+  var currentGroups = $(".filtered-by").each(function (i, o) {
+    output.push(o.textContent);
+  });
+
+  output.splice(output.indexOf(current), 1);
 
   // Clear D3 SVG and run with new paramaters
   visuals.clear();
