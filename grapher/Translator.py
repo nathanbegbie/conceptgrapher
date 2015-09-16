@@ -121,7 +121,20 @@ class Translator:
         # CREATE THE JSON
 
         # iterate through the nodes
+
         for key, value in self.graph.nodeDict.iteritems():
+            typeof = ""
+            if isinstance(value, FactNode):
+                typeof = "FactNode"
+            elif isinstance(value, ConceptNode):
+                typeof = "ConceptNode"
+            elif isinstance(value, MisconNode):
+                typeof = "MisconNode"
+            elif isinstance(value, ScaseNode):
+                typeof = "ScaseNode"
+            else:
+                print "Error of Node type"
+
             nodes_groups = []
             # iterate through each group
             # see if the node belongs to the group
@@ -130,14 +143,32 @@ class Translator:
                     nodes_groups.append(group)
 
             self.nodes.append({"name": value.ID,
-                               "group": nodes_groups})
+                               "group": nodes_groups,
+                               "typeof": typeof,
+                               "content": value.content})
 
         print len(self.nodes)
 
         # add the edges
         for source in self.graph.edgeDict:
-            for item in self.graph.edgeDict[source].targets:
-                self.links.append({"source": source, "target": item})
+            if source in self.graph.groupDict:
+                continue
+            for target in self.graph.edgeDict[source].targets:
+                if target in self.graph.groupDict:
+                    continue
+                value = self.graph.nodeDict[target]
+                typeof = ""
+                if (isinstance(value, FactNode) or
+                        isinstance(value, ConceptNode)):
+                    typeof = "directed"
+                elif (isinstance(value, MisconNode) or
+                        isinstance(value, ScaseNode)):
+                    typeof = "undirected"
+                else:
+                    print "Error of Node type"
+                self.links.append({"source": source,
+                              "target": target,
+                              "typeof": typeof})
 
         data = {"nodes": self.nodes, "links": self.links}
 
