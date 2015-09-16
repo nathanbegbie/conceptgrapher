@@ -130,7 +130,8 @@ class Translator:
 
             nodes.append({"name": value.ID,
                           "group": nodes_groups,
-                          "typeof": typeof})
+                          "typeof": typeof,
+                          "content": value.content})
 
         print len(nodes)
 
