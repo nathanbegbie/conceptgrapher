@@ -7,7 +7,7 @@ class Visualizer {
     this.height = height;
   }
 
-  run(constraint) {
+  run(constraint, rebuild) {
     // Force Setup
     var force = cola.d3adaptor() //.convergenceThreshold(0.01)
     .size([this.width, this.height])
@@ -115,7 +115,9 @@ class Visualizer {
       }
 
       //createButtons(uniqueGroup);
-        buildList(uniqueGroup);
+        if (rebuild === true) {
+          buildList(uniqueGroup);
+        }
 
       var routeEdges = function () {
         d3cola.prepareEdgeRouting(margin / 3);
@@ -200,20 +202,18 @@ class Visualizer {
       return -1;
     }
   }
+
+  clear() {
+    d3.select('svg').remove();
+  }
+
 }
 
+
+// Instantiation of visualizer
 let visuals = new Visualizer($(window).width() - 300, $(window).height() - 20);
-visuals.run(null);
+visuals.run(null, true);
 
-
-// JQuery Events
-$(document).ready(() => {
-  $(".test").on("click", () => {
-    console.log("Clearing...");
-    d3.select('svg').remove();
-    visuals.run(null);
-  });
-});
 
 $(document).on("click", ".name", () => {
 
@@ -230,7 +230,7 @@ $(document).on("click", ".name", () => {
   });
 
   // Clear D3 SVG and run with new paramaters
-  d3.select('svg').remove();
-  visuals.run(output);
+  visuals.clear();
+  visuals.run(output, false);
 
 });
