@@ -16,8 +16,6 @@ class Node(object):
         """Return a Node object with name *name* and label *label*"""
         self.ID = ID
         self.label = label
-        self.colour = "black"
-        self.shape = "circle"
         self.successors = {}
         self.outDegree = 0
 
@@ -29,50 +27,54 @@ class FactNode(Node):
     """A subclass of Node, specifically a node containing a fact.
 Attributes
     :
-    content: a string containing the content of the fact
+    label: a string containing the label of the fact
     """
 
-    def __init__(self, ID, content):
+    def __init__(self, ID, label):
         """Return a Node object with name *name* and label *label*"""
         # super?
         self.ID = ID
-        self.content = content
+        self.label = label
+        self.successors = {}
 
 
 class MisconNode(Node):
     """A subclass of Node, specifically a node containing a misconception.
 
     Attributes:
-    content: a string containing the content of the misconception
+    label: a string containing the label of the misconception
     """
 
-    def __init__(self, ID, content):
+    def __init__(self, ID, label):
         """Return a Node object with name *name* and label *label*"""
         self.ID = ID
-        self.content = content
+        self.label = label
+        self.successors = {}
 
 
 class ScaseNode(Node):
     """A subclass of Node, specifically a node containing an scase.
 
     Attributes:
-    content: a string containing the content of the scase
+    label: a string containing the label of the scase
     """
 
-    def __init__(self, ID, content):
+    def __init__(self, ID, label):
         """Return a Node object with name *name* and label *label*"""
         self.ID = ID
-        self.content = content
+        self.label = label
+        self.successors = {}
 
 
 class ConceptNode(Node):
     """A subclass of Node, specifically a node containing a concept.
 
     Attributes:
-    content: a string containing the content of the concept
+    label: a string containing the label of the concept
     """
 
-    def __init__(self, ID, content):
+    def __init__(self, ID, label):
         """Return a Node object with name *name* and label *label*"""
         self.ID = ID
-        self.content = content
+        self.label = label
+        self.successors = {}
