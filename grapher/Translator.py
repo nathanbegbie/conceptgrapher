@@ -14,8 +14,9 @@ class Translator:
         self.nodes = []
         self.groups = {}
 
-    def initialise_data(self):
-
+    def process_data(self):
+        """Reads in the .map file and
+        stores the information in the appropriate object"""
         # get a list of the files in the directory
         mypath = path.dirname(path.realpath(__file__))
 
@@ -118,10 +119,9 @@ class Translator:
             # get the list of nodes to correspond to the group names
             self.groups[group_name] = self.nodes
 
-        # CREATE THE JSON
-
-        # iterate through the nodes
-
+    def output_data(self):
+        """This takes the information stored in the objects and 
+        outputs a json file with the appropriate data"""
         for key, value in self.graph.nodeDict.iteritems():
             typeof = ""
             if isinstance(value, FactNode):
@@ -167,8 +167,8 @@ class Translator:
                 else:
                     print "Error of Node type"
                 self.links.append({"source": source,
-                              "target": target,
-                              "typeof": typeof})
+                                   "target": target,
+                                   "typeof": typeof})
 
         data = {"nodes": self.nodes, "links": self.links}
 
