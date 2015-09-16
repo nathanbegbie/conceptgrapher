@@ -270,7 +270,7 @@ $(document).on("click", ".close-filter", () => {
   var currentGroups = $(".filtered-by").each( (i, o) => {
     output.push(o.textContent);
   });
-  
+
   output.splice(output.indexOf(current), 1);
 
   // Clear D3 SVG and run with new paramaters

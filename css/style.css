@@ -51,6 +51,13 @@ a {
 
 #group-wrapper {
   margin-top: 18px;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.input-field {
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 #groups-scroll {
