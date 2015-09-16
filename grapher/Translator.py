@@ -8,10 +8,13 @@ from os.path import isfile, join
 
 
 class Translator:
+    def __init__(self):
+        self.graph = Graph()
+        self.links = []
+        self.nodes = []
+        self.groups = {}
 
     def initialise_data(self):
-        # create the graph
-        graph = Graph()
 
         # get a list of the files in the directory
         mypath = path.dirname(path.realpath(__file__))
@@ -22,149 +25,125 @@ class Translator:
 
         print destination_directory
 
-        list_of_files = [f for f in listdir(destination_directory)
-                         if isfile(join(destination_directory, f))]
+        # list_of_files = [f for f in listdir(destination_directory)
+        #                  if isfile(join(destination_directory, f))]
 
-        # create information storage
+        # get the file
+        try:
+            f = open('FinancialMaths.map', 'r')
+        except IOError:
+            print "file read error"
+            raise SystemExit
 
-        links = []
-        nodes = []
-        groups = {}
+        # get the first set of the groups
+        map_file = f.read()
+        f.close()
 
-        for file_name in list_of_files:
-            if (file_name.endswith('.map')):
-                print "FILE: " + file_name
-                # get the file
-                try:
-                    f = open("../" + file_name, 'r')
-                except IOError:
-                    print "file read error"
-                    raise SystemExit
+        # get all lines with node format
+        node_dict = (re.findall(
+            r'[A-z]{4}\d{3,4}\s*\[.*type=\".*\".*label=\".*\".*]',
+            map_file))
 
-                # get the first set of the groups
-                map_file = f.read()
-                f.close()
+        # get all nodes with info between /* and */
+        node_dict += (re.findall(
+            r'[A-z]{4}\d{3,4}\s?/\*.*\*/',
+            map_file,
+            re.I | re.M))
 
-                # get all lines with node format
-                node_dict = (re.findall(
-                    r'[A-z]{4}\d{3,4}\s*\[.*type=\".*\".*label=\".*\".*]',
-                    map_file))
+        for node in node_dict:
+            # get the id
+            id = re.match(r'[A-z]{4}\d{3,4}', node)[0]
+            type = re.search(r'type=\".*\",', node)[0][6:-2]
+            label = re.search(r',\slabel=\".*\"', node)[0][9:-1]
 
-                # get all nodes with info between /* and */
-                node_dict += (re.findall(
-                    r'[A-z]{4}\d{3,4}\s?/\*.*\*/',
-                    map_file,
-                    re.I | re.M))
+            if(type == "group"):
+                self.graph.add_group(Group(groupID=id, content=label))
+            elif(type == "fact"):
+                self.graph.add_node(FactNode(ID=id, content=label))
+            elif(type == "concept"):
+                self.graph.add_node(ConceptNode(ID=id, content=label))
+            elif(type == "miscon"):
+                self.graph.add_node(MisconNode(ID=id, content=label))
+            elif(type == "scase"):
+                self.graph.add_node(ScaseNode(ID=id, content=label))
+            else:
+                print "Unknown data type"
 
-                for node in node_dict:
-                    # get the id
-                    id = re.match(r'[A-z]{4}\d{3,4}', node)[0]
-                    type = re.search(r'type=\".*\",', node)[0][6:-2]
-                    label = re.search(r',\slabel=\".*\"', node)[0][9:-1]
+        print "number of nodes", self.graph.numNodes
+        print "number of groups", len(self.graph.groupDict)
 
-                    if(type == "group"):
-                        graph.add_group(Group(groupID=id, content=label))
-                    elif(type == "fact"):
-                        graph.add_node(FactNode(ID=id, content=label))
-                    elif(type == "concept"):
-                        graph.add_node(ConceptNode(ID=id, content=label))
-                    elif(type == "miscon"):
-                        graph.add_node(MisconNode(ID=id, content=label))
-                    elif(type == "scase"):
-                        graph.add_node(ScaseNode(ID=id, content=label))
-                    else:
-                        print "Unknown data type"
+        # add the edges
+        edge_dict = (re.findall(
+            r'[A-z]{4}\d{3,4}\s?->\s?[A-z]{4}\d{3,4}',
+            map_file, overlapped=True))
+        # edge cases
+        edge_dict += (re.findall(
+            r'[A-z]{3,4}\d{3,4}\s?/\*.*\*/\s?->\s?[A-z]{4}\d{3,4}',
+            map_file))
 
-                print "number of nodes", graph.numNodes
-                print "number of groups", len(graph.groupDict)
+        for edge in edge_dict:
+            codes = re.findall(r'[A-z]{3,4}\d{3,4}', edge)
+            self.graph.add_edge(codes[0], codes[1])
 
-                # add the edges
-                edge_dict = (re.findall(
-                    r'[A-z]{4}\d{3,4}\s?->\s?[A-z]{4}\d{3,4}',
-                    map_file, overlapped=True))
-                # edge cases
-                edge_dict += (re.findall(
-                    r'[A-z]{3,4}\d{3,4}\s?/\*.*\*/\s?->\s?[A-z]{4}\d{3,4}',
-                    map_file))
+        print len(self.graph.nodeDict)
 
-                for edge in edge_dict:
-                    codes = re.findall(r'[A-z]{3,4}\d{3,4}', edge)
-                    graph.add_edge(codes[0], codes[1])
+        # Get the groups
+        group_starts = re.finditer(
+            r'([A-z]{4}\d{3,4}|[A-z]{7}\s?\[.*\]\s?)\s?\{',
+            map_file)
+        # count = 0
 
-                print len(graph.nodeDict)
+        for item in group_starts:
+            # get the name of the group
+            group_names = re.findall(
+                r'[A-z]{4}\d{3,4}|[A-z]{7}',
+                item.group(0))
+            group_name = group_names[0]
+            # set the start position to the pos of the '{'
+            count = item.end()
+            # keep track of brackets until we have a matching number
+            bracket_count = 1
+            while(bracket_count > 0):
+                char = map_file[count]
+                if char == "{":
+                    bracket_count += 1
+                elif char == "}":
+                    bracket_count -= 1
+                else:
+                    pass
+                count += 1
+            # get all of the nodes within the group
+            self.nodes = re.findall(r'[A-z]{4}\d{3,4}',
+                                    map_file[(item.end() - 1):(count + 1)])
+            # get the list of nodes to correspond to the group names
+            self.groups[group_name] = self.nodes
 
-                # Get the groups
-                group_starts = re.finditer(
-                    r'([A-z]{4}\d{3,4}|[A-z]{7}\s?\[.*\]\s?)\s?\{',
-                    map_file)
-                # count = 0
-                
-                for item in group_starts:
-                    # get the name of the group
-                    group_names = re.findall(
-                        r'[A-z]{4}\d{3,4}|[A-z]{7}',
-                        item.group(0))
-                    group_name = group_names[0]
-                    # set the start position to the pos of the '{'
-                    count = item.end()
-                    # keep track of brackets until we have a matching number
-                    bracket_count = 1
-                    while(bracket_count > 0):
-                        char = map_file[count]
-                        if char == "{":
-                            bracket_count += 1
-                        elif char == "}":
-                            bracket_count -= 1
-                        else:
-                            pass
-                        count += 1
-                    # get all of the nodes within the group
-                    nodes = re.findall(r'[A-z]{4}\d{3,4}',
-                                       map_file[(item.end() - 1):(count + 1)])
-                    # get the list of nodes to correspond to the group names
-                    groups[group_name] = nodes
+        # CREATE THE JSON
 
-                # iterate through the nodes
-                for key, value in graph.nodeDict.iteritems():
-                    nodes_groups = []
-                    # iterate through each group
-                    # see if the node belongs to the group
-                    for group in groups:
-                        if value.ID in groups[group]:
-                            nodes_groups.append(group)
+        # iterate through the nodes
+        for key, value in self.graph.nodeDict.iteritems():
+            nodes_groups = []
+            # iterate through each group
+            # see if the node belongs to the group
+            for group in self.groups:
+                if value.ID in self.groups[group]:
+                    nodes_groups.append(group)
 
-                    nodes.append({"name": value.ID,
-                                  "group": nodes_groups})
+            self.nodes.append({"name": value.ID,
+                               "group": nodes_groups})
 
-                print len(nodes)
+        print len(self.nodes)
 
-                for i in range(0, len(nodes)):
-                    # see if the node has any edges
-                    # get the id of the graph,
-                    # check if it is in the dict of edges
-                    source_id = nodes[i]["name"]
+        # add the edges
+        for source in self.graph.edgeDict:
+            for item in self.graph.edgeDict[source].targets:
+                self.links.append({"source": source, "target": item})
 
-                    if source_id in graph.edgeDict:
-                        # iterate through the list of targets
-                        # for each target,
-                        # get target's position in the nodes array
-                        for target_id in graph.edgeDict[source_id].targets:
-                            position = 0
-                            for j in range(0, len(nodes)):
-                                # check if we have found the position of node
-                                if target_id == nodes[j]["name"]:
-                                    position = j
-                                    break
-                            links.append({"source": i, "target": position})
-                    else:
-                        pass
-                        # print "node " + source_id + " has no edges"
-                data = {"nodes": nodes, "links": links}
+        data = {"nodes": self.nodes, "links": self.links}
 
         # set up correct file directory
         mypath = path.dirname(path.realpath(__file__))
         destination_file = (path.join(mypath, pardir) + "/data.json")
 
-        # write to json file
         with open(destination_file, 'w') as outfile:
             json.dump(data, outfile, indent=2, sort_keys=True)
