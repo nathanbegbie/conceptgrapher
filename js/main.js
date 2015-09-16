@@ -15,7 +15,7 @@ class Visualizer {
     .avoidOverlaps(false)
     //.symmetricDiffLinkLengths(10)
     .flowLayout('y', 30)
-    .jaccardLinkLengths(50)
+    .jaccardLinkLengths(100)
     .on("tick", tick);
 
     var drag = d3.behavior.drag() //force.drag();
@@ -28,6 +28,17 @@ class Visualizer {
     .attr("width", this.width)
     .attr("height", this.height)
     .call(d3.behavior.zoom().on("zoom", zoom));
+
+    //create a placeholder for the shape of the arrowhead
+    svg.append("defs").append("marker")
+    .attr("id", "arrowhead")
+    .attr("refX", 20)
+    .attr("refY", 2)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 4)
+    .attr("orient", "auto")
+    .append("path")
+    .attr("d", "M 0,0 V 4 L6,2 Z"); //this is actual shape for arrowhead
 
     svg.append("rect")
     .attr("class", "background")
@@ -93,14 +104,51 @@ class Visualizer {
       // Adding links to SVG
       link = link.data(links)
         .enter().append("line")
-        .attr("class", "link");
+        .attr("class", d => {return "link " + d.typeof;})
+        .attr("marker-end", d => {
+          if (d.typeof === "directed") {
+            return "url(#arrowhead)";
+          }
+          else {
+            return " ";
+          }
+        });
+      // size of symbols
+      var scaleOfBigSymbols = 6;
+      var scaleOfSmallSymbols = 4;
 
       // Adding nodes to SVG
       node = node.data(nodes)
-        .enter().append("circle")
-        .attr("class", f => {return (f.group.join(" ") + " node");})
-        .attr("r", 12)
-        .call(drag);
+        .enter().append("g")
+        .attr("class", f => {return (f.group.join(" ") + " " + f.typeof + " node");});
+
+        d3.selectAll(".ConceptNode").append("path")
+        .attr("d", d3.svg.symbol().type("square"))
+        .attr("transform", "scale(" + scaleOfBigSymbols + ")");
+
+        //Fact
+        d3.selectAll(".FactNode").append("path")
+        .attr("d", d3.svg.symbol().type("circle"))
+        .attr("transform", "scale(" + scaleOfBigSymbols + ")");
+
+        //Scase
+        d3.selectAll(".ScaseNode").append("path")
+        .attr("d", d3.svg.symbol().type("cross"))
+        .attr("transform", "scale(" + scaleOfSmallSymbols + ")");
+
+        d3.selectAll(".MisconNode").append("path")
+        .attr("d", d3.svg.symbol().type("diamond"))
+        .attr("transform", "scale(" + scaleOfSmallSymbols + ")");
+
+        node.append("svg:text")
+        .attr("class", "nodetext")
+        .attr("dx", 0)
+        .attr("dy", ".35em")
+        .attr("text-anchor", "middle")
+        .attr("fill", "black")
+        .text(d => {
+          return d.name
+        });
 
       // Calculating unique group numbers
       var uniqueGroup = [];
@@ -135,8 +183,12 @@ class Visualizer {
         .attr("x2",  f => {return f.target.x;})
         .attr("y2",  f => {return f.target.y;});
 
-      node.attr("cx",  f => {return f.x;})
-        .attr("cy",  f => {return f.y;});
+      //node.attr("cx",  f => {return f.x;})
+        //.attr("cy",  f => {return f.y;});
+
+        node.attr("transform", function (d) {
+          return "translate(" + d.x + "," + d.y + ")";
+        });
     }
 
     function zoom() {
