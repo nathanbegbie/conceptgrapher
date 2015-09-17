@@ -1,17 +1,63 @@
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Material Icons'), local('MaterialIcons-Regular'), url(http://fonts.gstatic.com/s/materialicons/v7/2fcrYFNaTjcS6g4U3t-Y5ZjZjT5FdEJ140U2DJYC3mY.woff2) format('woff2');
+}
+
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  word-wrap: normal;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+
 body {
   font: 20px arial;
 }
 
-.link {
-  stroke: #000;
-  stroke-width: 1.5px;
+li {
+  padding: 0px;
+  margin: 0px;
 }
 
+p {
+  margin: 0px;
+}
+
+a {
+  cursor: hand;
+  cursor: pointer;
+}
+
+.chip {
+  margin: 3px;
+  cursor: hand;
+  cursor: pointer;
+}
+
+.input-field {
+  margin-top: 0px;
+}
+
+.link.undirected {
+  stroke:#595656;
+  stroke-width: 3px;
+  stroke-dasharray: 9, 3;
+}
+.link.directed {
+  stroke: #343434;
+  stroke-width: 3px;
+}
 .node {
   cursor: move;
-  fill: #EEEEEE;
-  stroke: #000;
-  stroke-width: 2px;
 }
 
 .node.fixed {
@@ -22,9 +68,34 @@ body {
   float: center;
 }
 
-#groups {
-  float: right;
-  width: 250px;
+.background {
+  color: #FFFFFF;
+}
+
+#group-wrapper {
+  margin-top: 18px;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.input-field {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+#groups-scroll {
+  height: 300px;
+  overflow-y: auto;
+}
+
+#description {
+  margin: 0px;
+  height: 30px;
+  font-size: 16px;
+}
+
+#description > p {
+  padding: 0px;
 }
 
 text {
@@ -34,8 +105,51 @@ text {
   stroke-width: .5;
 }
 
-svg {
-  border-style: solid;
-  border-width: 2px;
-  border-color: #000000;
+.row {
+  padding-bottom: 0px;
+  margin-bottom: 0px;
+}
+
+.svgClass {
+  background-color: #eee;
+}
+
+#svg-wrapper {
+  height: 100%;
+}
+
+#filter-wrapper {
+  margin-top: 23px;
+  overflow-y: scroll;
+  height: 200px;
+}
+
+.node {
+  stroke: #000000;
+  stroke-width: 0.2;
+}
+
+.highlight {
+  font-size: 20px;
+}
+
+.nodetext {
+  pointer-events: none;
+  font: 10px sans-serif;
+}
+
+.node.ConceptNode {
+  fill: #4783c1;
+}
+
+.node.FactNode {
+  fill: #FFC107;
+}
+
+.node.MisconNode {
+  fill: #e76351;
+}
+
+.node.ScaseNode{
+  fill: #55cd7c;
 }
