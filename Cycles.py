@@ -6,13 +6,6 @@ class Cycles:
 
     def find_cycle(self, graph):
 
-        workingGraph = Graph()
-        for fNode in graph.nodeDict.iterkeys():
-            print("Node!")
-            if (isinstance(fNode, Nodes.FactNode) or isinstance(fNode, Nodes.ConceptNode)):
-                print(fNode.ID)
-                workingGraph.nodeDict[fNode.ID] = fNode
-
         index_counter = [0]
         stack = []  # stack of Node IDs
         lowlinks = {}  # to keep track of which nodes have been visited recursively
@@ -27,7 +20,7 @@ class Cycles:
             stack.append(nodeID)
 
             # visit successors of the node
-            for successorID in workingGraph.nodeDict[nodeID].successors.iterkeys():
+            for successorID in graph.nodeDict[nodeID].successors.iterkeys():
                 if successorID not in lowlinks:
                     # Successor has not yet been visited; recurse on it
                     strongconnect(successorID)
@@ -49,7 +42,7 @@ class Cycles:
                 # storing the result
                 result.append(component)
 
-        for nodeID in workingGraph.nodeDict.iterkeys():
+        for nodeID in graph.nodeDict.iterkeys():
             # only visit fact and concept nodes
             if nodeID not in lowlinks:
                 strongconnect(nodeID)
