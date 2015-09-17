@@ -26,12 +26,9 @@ var Visualizer = (function () {
       //.symmetricDiffLinkLengths(10)
       .flowLayout('y', 30).jaccardLinkLengths(100).on("tick", tick);
 
-      /*
-          var drag = force.drag()
-          .origin( d => { return d; })
-          .on("dragstart", dragStarting)
-          .on("drag", dragging)
-          .on("dragend", dragEnding); */
+      var drag = force.drag().origin(function (d) {
+        return d;
+      }).on("dragstart", dragStarting).on("drag", dragging).on("dragend", dragEnding);
 
       var svg = d3.select("#svg-wrapper").append("svg").attr("width", this.width).attr("height", this.height).call(d3.behavior.zoom().on("zoom", zoom));
 
@@ -145,7 +142,7 @@ var Visualizer = (function () {
         // Adding nodes to SVG
         node = node.data(nodes).enter().append("g").attr("class", function (f) {
           return f.group.join(" ") + " " + f["typeof"] + " node";
-        }).call(force.drag);
+        }).call(drag);
 
         d3.selectAll(".ConceptNode").append("path").attr("d", d3.svg.symbol().type("square")).attr("transform", "scale(" + scaleOfBigSymbols + ")");
 
@@ -244,6 +241,7 @@ var Visualizer = (function () {
 
       function dragStarting(f) {
         d3.event.sourceEvent.stopPropagation();
+        //svg.on("zoom", null);
         d3.select(this).classed("dragging", true);
       }
 

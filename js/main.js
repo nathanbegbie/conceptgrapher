@@ -18,12 +18,12 @@ class Visualizer {
     .jaccardLinkLengths(100)
     .on("tick", tick);
 
-/*
+
     var drag = force.drag()
     .origin( d => { return d; })
     .on("dragstart", dragStarting)
     .on("drag", dragging)
-    .on("dragend", dragEnding); */
+    .on("dragend", dragEnding);
 
     var svg = d3.select("#svg-wrapper").append("svg")
     .attr("width", this.width)
@@ -119,7 +119,7 @@ class Visualizer {
       node = node.data(nodes)
         .enter().append("g")
         .attr("class", f => {return (f.group.join(" ") + " " + f.typeof + " node");})
-        .call(force.drag);
+        .call(drag);
 
         d3.selectAll(".ConceptNode").append("path")
         .attr("d", d3.svg.symbol().type("square"))
@@ -186,6 +186,7 @@ class Visualizer {
 
     function dragStarting(f) {
       d3.event.sourceEvent.stopPropagation();
+      //svg.on("zoom", null);
       d3.select(this).classed("dragging", true);
     }
 
