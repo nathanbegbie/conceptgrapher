@@ -39,7 +39,8 @@ class Translator:
             # get the id
             id = re.match(r'[A-z]{4}\d{3,4}', node)[0]
             type = re.search(r'type=\".*\",', node)[0][6:-2]
-            label = re.search(r',\slabel=\".*\"', node)[0][9:-1]
+            label = (re.search(r',\slabel=\".*\"', node)[0][9:-1]
+                     .replace("\\n", " "))
 
             if(type == "group"):
                 graph.add_group(Group(groupID=id, content=label))
