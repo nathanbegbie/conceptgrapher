@@ -19,9 +19,7 @@ class SimpleDoingStuff:
         graph.add_node(nodeA)
         graph.add_node(nodeB)
         graph.add_node(nodeC)
-        # assert Cycles().find_cycle(graph) == [('C', 'B', 'A')]
-        if (Cycles().find_cycle(graph) == [('C', 'B', 'A')]):
-            print("True")
+        assert Cycles().find_cycle(graph) == [('C', 'B', 'A')]
 
     def two_cycles():
         graph = Graph()
@@ -67,21 +65,41 @@ class SimpleDoingStuff:
 
     def no_cycles():
         graph = Graph()
-        nodeA = FactNode(ID="A", label="node")
-        nodeB = MisconNode(ID="B", label="node")
-        nodeC = FactNode(ID="C", label="node")
+        nodeA = FactNode(ID="A", label="nodeA")
+        nodeB = MisconNode(ID="B", label="nodeB")
+        nodeC = FactNode(ID="C", label="nodeC")
         nodeA.add_successor(nodeB)
+        nodeA.add_successor(nodeC)
         nodeB.add_successor(nodeC)
-        nodeC.add_successor(nodeA)
         graph.add_node(nodeA)
         graph.add_node(nodeB)
         graph.add_node(nodeC)
-        print(Cycles().find_cycle(graph))
-        # assert Cycles().find_cycle(graph) == [('C', 'B', 'A')]
-        if (Cycles().find_cycle(graph) == [('C', 'B', 'A')]):
-            print("True")
+        assert Cycles().find_cycle(graph) == []
+
+    def medium_graph():
+        graph = Graph()
+        nodeA = Node(ID="A", label="node")
+        nodeB = Node(ID="B", label="node")
+        nodeC = Node(ID="C", label="node")
+        nodeD = Node(ID="D", label="node")
+        nodeE = Node(ID="E", label="node")
+        nodeF = Node(ID="F", label="node")
+        nodeA.add_successor(nodeB)
+        nodeB.add_successor(nodeC)
+        nodeB.add_successor(nodeD)
+        nodeC.add_successor(nodeA)
+        nodeC.add_successor(nodeE)
+        nodeF.add_successor(nodeB)
+        graph.add_node(nodeA)
+        graph.add_node(nodeB)
+        graph.add_node(nodeC)
+        graph.add_node(nodeD)
+        graph.add_node(nodeE)
+        graph.add_node(nodeF)
+        assert Cycles().find_cycle(graph) == [('C', 'B', 'A')]
 
     # single_cycle()
     # two_cycles()
-    # overlapping_cycles()
-    no_cycles()
+    # overlapping_cycles() #fails
+    # no_cycles()
+    # medium_graph()

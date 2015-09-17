@@ -11,6 +11,7 @@ class Cycles:
         lowlinks = {}  # to keep track of which nodes have been visited recursively
         index = {}  # key=NodeID, value=integer
         result = []  # list of cycles
+        toReturn = []
 
         def strongconnect(nodeID):
             # set the depth index for this node to the smallest unused index
@@ -47,4 +48,8 @@ class Cycles:
             if nodeID not in lowlinks:
                 strongconnect(nodeID)
 
-        return result
+        for c in result:
+            if (len(c) > 1):
+                toReturn.append(c)
+
+        return toReturn
