@@ -244,7 +244,7 @@ var Visualizer = (function () {
           content = content.substring(0, 105) + "....";
         }
 
-        $("#description").append("<p class=\"valign\">" + d.name + ": " + content + "</p>");
+        $("#description").append("<p class=\"valign\"><span class=\"highlight\"><b>" + d.name + "</b></span> " + content + "</p>");
       }
 
       function mouseout(d) {

@@ -129,19 +129,27 @@ text {
   stroke-width: 0.2;
 }
 
+.highlight {
+  font-size: 20px;
+}
+
 .nodetext {
   pointer-events: none;
   font: 10px sans-serif;
 }
+
 .node.ConceptNode {
   fill: #4783c1;
 }
+
 .node.FactNode {
   fill: #FFC107;
 }
+
 .node.MisconNode {
   fill: #e76351;
 }
+
 .node.ScaseNode{
   fill: #55cd7c;
 }
