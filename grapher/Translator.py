@@ -108,6 +108,19 @@ class Translator:
         nodes = []
         # iterate through the nodes
         for key, value in graph.nodeDict.iteritems():
+
+            typeof = ""
+            if isinstance(value, FactNode):
+                typeof = "FactNode"
+            elif isinstance(value, ConceptNode):
+                typeof = "ConceptNode"
+            elif isinstance(value, MisconNode):
+                typeof = "MisconNode"
+            elif isinstance(value, ScaseNode):
+                typeof = "ScaseNode"
+            else:
+                print "Error of Node type"
+
             nodes_groups = []
             # iterate through each group
             # see if the node belongs to the group
@@ -116,15 +129,33 @@ class Translator:
                     nodes_groups.append(group)
 
             nodes.append({"name": value.ID,
-                          "group": nodes_groups})
+                          "group": nodes_groups,
+                          "typeof": typeof,
+                          "content": value.content})
 
         print len(nodes)
 
         links = []
         # add the edges
         for source in graph.edgeDict:
-            for item in graph.edgeDict[source].targets:
-                links.append({"source": source, "target": item})
+            if source in graph.groupDict:
+                continue
+            for target in graph.edgeDict[source].targets:
+                if target in graph.groupDict:
+                    continue
+                value = graph.nodeDict[target]
+                typeof = ""
+                if (isinstance(value, FactNode) or
+                        isinstance(value, ConceptNode)):
+                    typeof = "directed"
+                elif (isinstance(value, MisconNode) or
+                        isinstance(value, ScaseNode)):
+                    typeof = "undirected"
+                else:
+                    print "Error of Node type"
+                links.append({"source": source,
+                              "target": target,
+                              "typeof": typeof})
 
         data = {"nodes": nodes, "links": links}
 
