@@ -380,14 +380,14 @@ $(document).on("click", ".close-filter", function () {
 $(document).on("mouseover", ".chip", function () {
   var current = $(event.target).find('span').html();
   if (current !== undefined) {
-    $("body").find(".node").css("fill", "#F5F5F5");
-    $("body").find("." + current).css("fill", "#64DD17");
+    $("body").find(".node").css("fill", "#F5F5F5").css("opacity", "0.6");
+    $("body").find("." + current).css("fill", "#64DD17").css("opacity", "1");
   }
 });
 
 $(document).on("mouseleave", ".chip", function () {
-  $("body").find(".ConceptNode").css("fill", "#4783c1");
-  $("body").find(".FactNode").css("fill", "#FFC107");
-  $("body").find(".MisconNode").css("fill", "#e76351");
-  $("body").find(".ScaseNode").css("fill", "#55cd7c");
+  $("body").find(".ConceptNode").css("fill", "#4783c1").css("opacity", "1");
+  $("body").find(".FactNode").css("fill", "#FFC107").css("opacity", "1");
+  $("body").find(".MisconNode").css("fill", "#e76351").css("opacity", "1");
+  $("body").find(".ScaseNode").css("fill", "#55cd7c").css("opacity", "1");
 });
