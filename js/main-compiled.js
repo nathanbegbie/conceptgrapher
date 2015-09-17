@@ -22,15 +22,15 @@ var Visualizer = (function () {
       // Force Setup
       var force = cola.d3adaptor().size([this.width, this.height])
       //.linkDistance(60)
-      .avoidOverlaps(false)
-      //.symmetricDiffLinkLengths(10)
+      //.avoidOverlaps(true)
+      //.symmetricDiffLinkLengths(100)
       .flowLayout('y', 30).jaccardLinkLengths(100).on("tick", tick);
 
       var drag = force.drag().origin(function (d) {
         return d;
       }).on("dragstart", dragStarting).on("drag", dragging).on("dragend", dragEnding);
 
-      var svg = d3.select("#svg-wrapper").append("svg").attr("width", this.width).attr("height", this.height).call(d3.behavior.zoom().on("zoom", zoom));
+      var svg = d3.select("#svg-wrapper").append("svg").attr("width", this.width).attr("height", this.height).call(d3.behavior.zoom().on("zoom", zoom)).on("dblclick.zoom", null);
 
       //create a placeholder for the shape of the arrowhead
       svg.append("defs").append("marker").attr("id", "arrowhead").attr("refX", 20).attr("refY", 2).attr("markerWidth", 6).attr("markerHeight", 4).attr("orient", "auto").append("path").attr("d", "M 0,0 V 4 L6,2 Z"); //this is actual shape for arrowhead
@@ -144,15 +144,15 @@ var Visualizer = (function () {
           return f.group.join(" ") + " " + f["typeof"] + " node";
         }).call(drag);
 
-        d3.selectAll(".ConceptNode").append("path").attr("d", d3.svg.symbol().type("square")).attr("transform", "scale(" + scaleOfBigSymbols + ")");
+        d3.selectAll(".ConceptNode").append("path").attr("d", d3.svg.symbol().type("circle")).attr("transform", "scale(" + scaleOfBigSymbols + ")").on("dblclick", doubleClick).on("mouseover", mouseover).on("mouseout", mouseout);
 
         //Fact
-        d3.selectAll(".FactNode").append("path").attr("d", d3.svg.symbol().type("circle")).attr("transform", "scale(" + scaleOfBigSymbols + ")");
+        d3.selectAll(".FactNode").append("path").attr("d", d3.svg.symbol().type("square")).attr("transform", "scale(" + scaleOfBigSymbols + ")").on("dblclick", doubleClick).on("mouseover", mouseover).on("mouseout", mouseout);
 
         //Scase
-        d3.selectAll(".ScaseNode").append("path").attr("d", d3.svg.symbol().type("cross")).attr("transform", "scale(" + scaleOfSmallSymbols + ")");
+        d3.selectAll(".ScaseNode").append("path").attr("d", d3.svg.symbol().type("cross")).attr("transform", "scale(" + scaleOfSmallSymbols + ")").on("dblclick", doubleClick).on("mouseover", mouseover).on("mouseout", mouseout);
 
-        d3.selectAll(".MisconNode").append("path").attr("d", d3.svg.symbol().type("diamond")).attr("transform", "scale(" + scaleOfSmallSymbols + ")");
+        d3.selectAll(".MisconNode").append("path").attr("d", d3.svg.symbol().type("diamond")).attr("transform", "scale(" + scaleOfSmallSymbols + ")").on("dblclick", doubleClick).on("mouseover", mouseover).on("mouseout", mouseout);
 
         node.append("svg:text").attr("class", "nodetext").attr("dx", 0).attr("dy", ".35em").attr("text-anchor", "middle").attr("fill", "black").text(function (d) {
           return d.name;
@@ -235,14 +235,26 @@ var Visualizer = (function () {
         });
       }
 
+      function mouseover(d) {
+        $("#description").append("<p class=\"valign\">" + d.name + "</p>");
+      }
+
+      function mouseout(d) {
+        $("#description").find("p").remove();
+      }
+
       function zoom() {
         visuals.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
       }
 
       function dragStarting(f) {
         d3.event.sourceEvent.stopPropagation();
-        //svg.on("zoom", null);
+        d3.select(this).classed("fixed", f.fixed = true);
         d3.select(this).classed("dragging", true);
+      }
+
+      function doubleClick(f) {
+        d3.select(this).classed("fixed", f.fixed = false);
       }
 
       function dragging(f) {
@@ -314,7 +326,7 @@ var Visualizer = (function () {
   return Visualizer;
 })();
 
-var visuals = new Visualizer($("#svg-wrapper").width(), $(window).height() - 20);
+var visuals = new Visualizer($("#svg-wrapper").width(), $(window).height() - 60);
 visuals.run(null, true);
 
 $(document).on("click", ".name", function () {
@@ -355,4 +367,19 @@ $(document).on("click", ".close-filter", function () {
   // Clear D3 SVG and run with new paramaters
   visuals.clear();
   visuals.run(output, false);
+});
+
+$(document).on("mouseover", ".chip", function () {
+  var current = $(event.target).find('span').html();
+  if (current !== undefined) {
+    $("body").find(".node").css("fill", "#F5F5F5");
+    $("body").find("." + current).css("fill", "#64DD17");
+  }
+});
+
+$(document).on("mouseleave", ".chip", function () {
+  $("body").find(".ConceptNode").css("fill", "#4783c1");
+  $("body").find(".FactNode").css("fill", "#FFC107");
+  $("body").find(".MisconNode").css("fill", "#e76351");
+  $("body").find(".ScaseNode").css("fill", "#55cd7c");
 });
