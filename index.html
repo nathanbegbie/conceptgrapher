@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <head>
-
-  <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <!--Import materialize.css-->
   <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
 
@@ -21,7 +19,11 @@
 
 
   <div class="row">
-    <div class="col s9" id="svg-wrapper">
+    <div class="col s9">
+      <div id="svg-wrapper">
+      </div>
+      <div class="card-panel valign-wrapper" id="description">
+      </div>
     </div>
     <div class="col s3">
       <div id="group-wrapper" class="card-panel">
@@ -29,7 +31,7 @@
           <div class="input-field">
             <!--<i class="material-icons prefix">search</i>-->
             <input class="search" type="text"/>
-            <label>Group Search</label>
+            <label>Type Group Name to Filter</label>
           </div>
           <div id="groups-scroll">
             <div class="group-scroll">
