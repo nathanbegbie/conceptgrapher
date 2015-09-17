@@ -18,11 +18,12 @@ class Visualizer {
     .jaccardLinkLengths(100)
     .on("tick", tick);
 
-    var drag = d3.behavior.drag() //force.drag();
-    //.origin(d =>  {return d;})
-    //.on("dragstart", dragStarting)
-    //.on("drag", dragging)
-    //.on("dragend", dragEnding);
+/*
+    var drag = force.drag()
+    .origin( d => { return d; })
+    .on("dragstart", dragStarting)
+    .on("drag", dragging)
+    .on("dragend", dragEnding); */
 
     var svg = d3.select("#svg-wrapper").append("svg")
     .attr("width", this.width)
@@ -117,7 +118,8 @@ class Visualizer {
       // Adding nodes to SVG
       node = node.data(nodes)
         .enter().append("g")
-        .attr("class", f => {return (f.group.join(" ") + " " + f.typeof + " node");});
+        .attr("class", f => {return (f.group.join(" ") + " " + f.typeof + " node");})
+        .call(force.drag);
 
         d3.selectAll(".ConceptNode").append("path")
         .attr("d", d3.svg.symbol().type("square"))
@@ -159,9 +161,9 @@ class Visualizer {
         }
       }
 
-        if (rebuild === true) {
-          buildList(uniqueGroup);
-        }
+      if (rebuild === true) {
+        buildList(uniqueGroup);
+      }
 
     });
 
@@ -173,7 +175,7 @@ class Visualizer {
         .attr("x2",  f => {return f.target.x;})
         .attr("y2",  f => {return f.target.y;});
 
-        node.attr("transform", function (d) {
+        node.attr("transform", d => {
           return "translate(" + d.x + "," + d.y + ")";
         });
     }
@@ -185,7 +187,6 @@ class Visualizer {
     function dragStarting(f) {
       d3.event.sourceEvent.stopPropagation();
       d3.select(this).classed("dragging", true);
-      force.start();
     }
 
     function dragging(f) {
