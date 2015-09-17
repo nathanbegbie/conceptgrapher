@@ -142,6 +142,8 @@ var Visualizer = (function () {
         // Adding nodes to SVG
         node = node.data(nodes).enter().append("g").attr("class", function (f) {
           return f.group.join(" ") + " " + f["typeof"] + " node";
+        }).attr("content", function (f) {
+          return f.content;
         }).call(drag);
 
         d3.selectAll(".ConceptNode").append("path").attr("d", d3.svg.symbol().type("circle")).attr("transform", "scale(" + scaleOfBigSymbols + ")").on("dblclick", doubleClick).on("mouseover", mouseover).on("mouseout", mouseout);
@@ -236,7 +238,13 @@ var Visualizer = (function () {
       }
 
       function mouseover(d) {
-        $("#description").append("<p class=\"valign\">" + d.name + "</p>");
+        var content = d.content;
+
+        if (content.length > 100) {
+          content = content.substring(0, 105) + "....";
+        }
+
+        $("#description").append("<p class=\"valign\">" + d.name + ": " + content + "</p>");
       }
 
       function mouseout(d) {

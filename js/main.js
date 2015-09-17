@@ -119,6 +119,7 @@ class Visualizer {
       node = node.data(nodes)
         .enter().append("g")
         .attr("class", f => {return (f.group.join(" ") + " " + f.typeof + " node");})
+        .attr("content", f => {return f.content;})
         .call(drag);
 
         d3.selectAll(".ConceptNode").append("path")
@@ -193,7 +194,13 @@ class Visualizer {
     }
 
     function mouseover(d) {
-      $("#description").append(`<p class="valign">${d.name}</p>`);
+      var content = d.content;
+
+      if(content.length > 100) {
+        content = content.substring(0,105) + "....";
+      }
+
+      $("#description").append(`<p class="valign">${d.name}: ${content}</p>`);
     }
 
     function mouseout(d) {
