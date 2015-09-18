@@ -1,14 +1,51 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <head>
+  <!--Import materialize.css-->
+  <link type="text/css" rel="stylesheet" href="css/materialize.min.css"  media="screen,projection"/>
+
+  <!--Let browser know website is optimized for mobile-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
   <link rel="stylesheet" type="text/css" href="css/style.css">
-  <script src="d3/d3.min.js"></script>
+  <script type="text/javascript" src="js/cola.v3.min.js"></script>
+  <script type="text/javascript" src="d3/d3.min.js"></script>
   <script type="text/javascript" src="data.json"></script>
 </head>
 <body>
   <script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
-  <script type="text/javascript" src="js/main-compiled.js"></script>
-  <div id="groups">
-    <h1>Groups</h1>
+  <script type="text/javascript" src="js/list.min.js"></script>
+  <script type="text/javascript" src="js/materialize.min.js"></script>
+
+  <div class="row">
+    <div class="col s9">
+      <div id="svg-wrapper">
+      </div>
+      <div class="card-panel valign-wrapper" id="description">
+      </div>
+    </div>
+    <div class="col s3">
+      <div id="group-wrapper" class="card-panel">
+        <div id="groups">
+          <div class="input-field">
+            <!--<i class="material-icons prefix">search</i>-->
+            <input class="search" type="text"/>
+            <label>Type Group Name to Filter</label>
+          </div>
+          <div id="groups-scroll">
+            <div class="group-scroll">
+              <div id="groupAdd" class="list collection">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Needs to be here for List.js to run -->
+      <script type="text/javascript" src="js/main-compiled.js"></script>
+      <div id="filter-wrapper" class="card-panel">
+        <div id="filter">
+        </div>
+      </div>
+    </div>
   </div>
 </body>

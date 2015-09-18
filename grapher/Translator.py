@@ -39,7 +39,8 @@ class Translator:
             # get the id
             id = re.match(r'[A-z]{4}\d{3,4}', node)[0]
             type = re.search(r'type=\".*\",', node)[0][6:-2]
-            label = re.search(r',\slabel=\".*\"', node)[0][9:-1]
+            label = (re.search(r',\slabel=\".*\"', node)[0][9:-1]
+                     .replace("\\n", " "))
 
             if(type == "group"):
                 graph.add_group(Group(groupID=id, content=label))
@@ -108,6 +109,19 @@ class Translator:
         nodes = []
         # iterate through the nodes
         for key, value in graph.nodeDict.iteritems():
+
+            typeof = ""
+            if isinstance(value, FactNode):
+                typeof = "FactNode"
+            elif isinstance(value, ConceptNode):
+                typeof = "ConceptNode"
+            elif isinstance(value, MisconNode):
+                typeof = "MisconNode"
+            elif isinstance(value, ScaseNode):
+                typeof = "ScaseNode"
+            else:
+                print "Error of Node type"
+
             nodes_groups = []
             # iterate through each group
             # see if the node belongs to the group
@@ -116,30 +130,34 @@ class Translator:
                     nodes_groups.append(group)
 
             nodes.append({"name": value.ID,
-                          "group": nodes_groups})
+                          "group": nodes_groups,
+                          "typeof": typeof,
+                          "content": value.content})
 
         print len(nodes)
 
         links = []
-        for i in range(0, len(nodes)):
-            # see if the node has any edges
-            # get the id of the graph, check if it is in the dict of edges
-            source_id = nodes[i]["name"]
+        # add the edges
+        for source in graph.edgeDict:
+            if source in graph.groupDict:
+                continue
+            for target in graph.edgeDict[source].targets:
+                if target in graph.groupDict:
+                    continue
+                value = graph.nodeDict[target]
+                typeof = ""
+                if (isinstance(value, FactNode) or
+                        isinstance(value, ConceptNode)):
+                    typeof = "directed"
+                elif (isinstance(value, MisconNode) or
+                        isinstance(value, ScaseNode)):
+                    typeof = "undirected"
+                else:
+                    print "Error of Node type"
+                links.append({"source": source,
+                              "target": target,
+                              "typeof": typeof})
 
-            if source_id in graph.edgeDict:
-                # iterate through the list of targets
-                # for each target, get target's position in the nodes array
-                for target_id in graph.edgeDict[source_id].targets:
-                    position = 0
-                    for j in range(0, len(nodes)):
-                        # check if we have found the position of the node
-                        if target_id == nodes[j]["name"]:
-                            position = j
-                            break
-                    links.append({"source": i, "target": position})
-            else:
-                pass
-                # print "node " + source_id + " has no edges"
         data = {"nodes": nodes, "links": links}
 
         # set up correct file directory
