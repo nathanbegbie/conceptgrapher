@@ -20,7 +20,7 @@ class Translator:
         self.nodes = []
         self.groups = {}
 
-    def process_data(self):
+    def read_in_data(self):
         """Reads the .map files into a single string"""
         # get a list of the files in the directory
         mypath = path.dirname(path.realpath(__file__))
@@ -35,8 +35,6 @@ class Translator:
             list_of_files = [f for f in listdir(destination_directory)
                              if isfile(join(destination_directory, f))]
 
-        self.inputData = ""
-
         for file_name in list_of_files:
             if (file_name.endswith('.map')):
                 # get the file
@@ -49,6 +47,8 @@ class Translator:
                     print "file read error"
                     raise SystemExit
 
+    def process_node_information(self):
+        """Finds the nodes and creates the appropriate node objects"""
         # get all lines with node format
         node_dict = (re.findall(
             r'[A-z]{4}\d{3,4}\s*\[.*type=\".*\".*label=\".*\".*]',
@@ -80,7 +80,8 @@ class Translator:
             else:
                 print "Unknown data type"
 
-        # add the edges
+    def process_edge_information(self):
+        """Finds the edges and creates the appropriate edge objects"""
         edge_dict = (re.findall(
             r'[A-z]{4}\d{3,4}\s?->\s?[A-z]{4}\d{3,4}',
             self.inputData, overlapped=True))
@@ -93,7 +94,9 @@ class Translator:
             codes = re.findall(r'[A-z]{3,4}\d{3,4}', edge)
             self.graph.add_edge(codes[0], codes[1])
 
-        # Get the groups
+    def process_group_information(self):
+        """Finds the groups and which nodes belong to these groups
+        and creates the appropriate graph objects"""
         group_starts = re.finditer(
             r'([A-z]{4}\d{3,4}|[A-z]{7}\s?\[.*\]\s?)\s?\{',
             self.inputData)
@@ -120,7 +123,8 @@ class Translator:
                 count += 1
             # get all of the nodes within the group
             self.nodes = re.findall(r'[A-z]{4}\d{3,4}',
-                                    self.inputData[(item.end() - 1):(count + 1)])
+                                    self.inputData[
+                                        (item.end() - 1):(count + 1)])
             # get the list of nodes to correspond to the group names
             self.groups[group_name] = []
             for ID in self.nodes:
@@ -128,9 +132,9 @@ class Translator:
                         ID not in self.groups[group_name]):
                     self.groups[group_name].append(ID)
 
-    def output_data(self):
-        """This takes the information stored in the objects and
-        outputs a json file with the appropriate data"""
+    def process_output_data(self):
+        """Reformats the data stored in the objects into a form
+        that the front-end Javascript can work with"""
         for key, value in self.graph.nodeDict.iteritems():
             typeof = ""
             if isinstance(value, FactNode):
@@ -177,6 +181,8 @@ class Translator:
                                    "target": target,
                                    "typeof": typeof})
 
+    def write_output_data(self):
+        """Writes to a JSON file called 'data.json'"""
         data = {"nodes": self.nodes, "links": self.links}
 
         # set up correct file directory

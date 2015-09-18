@@ -5,8 +5,8 @@ from Translator import Translator
 class TestTranslator:
     def test_node_creation(self):
         translator = Translator(testing=True)
-        # pass testing argument
-        translator.process_data()
+        translator.read_in_data()
+        translator.process_node_information()
         # test1.map
         # Test that nodes are there
         assert "TEST101" in translator.graph.nodeDict
@@ -151,7 +151,9 @@ class TestTranslator:
 
     def test_edge_creation(self):
         translator = Translator(testing=True)
-        translator.process_data()
+        translator.read_in_data()
+        translator.process_node_information()
+        translator.process_edge_information()
         # test1.map
         assert "TEST101" in translator.graph.edgeDict
         assert "TEST201" in translator.graph.edgeDict
@@ -230,7 +232,10 @@ class TestTranslator:
 
     def test_group_creation(self):
         translator = Translator(testing=True)
-        translator.process_data()
+        translator.read_in_data()
+        translator.process_node_information()
+        translator.process_edge_information()
+        translator.process_group_information()
         assert "TEST000" in translator.graph.groupDict
         assert "TEST001" in translator.graph.groupDict
         assert "TEST002" in translator.graph.groupDict
