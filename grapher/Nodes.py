@@ -3,7 +3,7 @@ class Node(object):
 
     Attributes:
         ID: a string representing the Node's ID (unique identifier).
-        label: a string representing the Node's description
+        content: a string representing the Node's description
         colour
         shape
         groups: a list of strings of the groups to which the node belongs
@@ -12,12 +12,11 @@ class Node(object):
         successors: A list of Node objects one edge away from the node
     """
 
-    def __init__(self, ID, label):
-        """Return a Node object with name *name* and label *label*"""
+    def __init__(self, ID, content):
+        """Return a Node object with name *name* and content *content*"""
         self.ID = ID
-        self.label = label
+        self.content = content
         self.successors = {}
-        self.outDegree = 0
 
     def add_successor(self, node):
         self.successors[node.ID] = node
@@ -27,14 +26,14 @@ class FactNode(Node):
     """A subclass of Node, specifically a node containing a fact.
 Attributes
     :
-    label: a string containing the label of the fact
+    content: a string containing the content of the fact
     """
 
-    def __init__(self, ID, label):
-        """Return a Node object with name *name* and label *label*"""
+    def __init__(self, ID, content):
+        """Return a Node object with name *name* and content *content*"""
         # super?
         self.ID = ID
-        self.label = label
+        self.content = content
         self.successors = {}
 
 
@@ -42,13 +41,13 @@ class MisconNode(Node):
     """A subclass of Node, specifically a node containing a misconception.
 
     Attributes:
-    label: a string containing the label of the misconception
+    content: a string containing the content of the misconception
     """
 
-    def __init__(self, ID, label):
-        """Return a Node object with name *name* and label *label*"""
+    def __init__(self, ID, content):
+        """Return a Node object with name *name* and content *content*"""
         self.ID = ID
-        self.label = label
+        self.content = content
         self.successors = {}
 
 
@@ -56,13 +55,13 @@ class ScaseNode(Node):
     """A subclass of Node, specifically a node containing an scase.
 
     Attributes:
-    label: a string containing the label of the scase
+    content: a string containing the content of the scase
     """
 
-    def __init__(self, ID, label):
-        """Return a Node object with name *name* and label *label*"""
+    def __init__(self, ID, content):
+        """Return a Node object with name *name* and content *content*"""
         self.ID = ID
-        self.label = label
+        self.content = content
         self.successors = {}
 
 
@@ -70,11 +69,11 @@ class ConceptNode(Node):
     """A subclass of Node, specifically a node containing a concept.
 
     Attributes:
-    label: a string containing the label of the concept
+    content: a string containing the content of the concept
     """
 
-    def __init__(self, ID, label):
-        """Return a Node object with name *name* and label *label*"""
+    def __init__(self, ID, content):
+        """Return a Node object with name *name* and content *content*"""
         self.ID = ID
-        self.label = label
+        self.content = content
         self.successors = {}

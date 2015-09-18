@@ -7,9 +7,9 @@ from Cycles import Cycles
 class TestCycles:
     def test_single_cycle(self):
         graph = Graph()
-        nodeA = FactNode(ID="A", label="node")
-        nodeB = ConceptNode(ID="B", label="node")
-        nodeC = FactNode(ID="C", label="node")
+        nodeA = FactNode(ID="A", content="node")
+        nodeB = ConceptNode(ID="B", content="node")
+        nodeC = FactNode(ID="C", content="node")
         nodeA.add_successor(nodeB)
         nodeB.add_successor(nodeC)
         nodeC.add_successor(nodeA)
@@ -20,9 +20,9 @@ class TestCycles:
 
     def test_no_cycles(self):
         graph = Graph()
-        nodeA = FactNode(ID="A", label="nodeA")
-        nodeB = MisconNode(ID="B", label="nodeB")
-        nodeC = FactNode(ID="C", label="nodeC")
+        nodeA = FactNode(ID="A", content="nodeA")
+        nodeB = MisconNode(ID="B", content="nodeB")
+        nodeC = FactNode(ID="C", content="nodeC")
         nodeA.add_successor(nodeB)
         nodeA.add_successor(nodeC)
         nodeB.add_successor(nodeC)
@@ -35,12 +35,12 @@ class TestCycles:
 
     def test_two_cycles(self):
         graph = Graph()
-        nodeA = Node(ID="A", label="node")
-        nodeB = Node(ID="B", label="node")
-        nodeC = Node(ID="C", label="node")
-        nodeD = Node(ID="D", label="node")
-        nodeE = Node(ID="E", label="node")
-        nodeF = Node(ID="F", label="node")
+        nodeA = Node(ID="A", content="node")
+        nodeB = Node(ID="B", content="node")
+        nodeC = Node(ID="C", content="node")
+        nodeD = Node(ID="D", content="node")
+        nodeE = Node(ID="E", content="node")
+        nodeF = Node(ID="F", content="node")
         nodeA.add_successor(nodeB)
         nodeB.add_successor(nodeC)
         nodeC.add_successor(nodeA)
@@ -57,12 +57,12 @@ class TestCycles:
 
     def test_medium_graph(self):
         graph = Graph()
-        nodeA = Node(ID="A", label="node")
-        nodeB = Node(ID="B", label="node")
-        nodeC = Node(ID="C", label="node")
-        nodeD = Node(ID="D", label="node")
-        nodeE = Node(ID="E", label="node")
-        nodeF = Node(ID="F", label="node")
+        nodeA = Node(ID="A", content="node")
+        nodeB = Node(ID="B", content="node")
+        nodeC = Node(ID="C", content="node")
+        nodeD = Node(ID="D", content="node")
+        nodeE = Node(ID="E", content="node")
+        nodeF = Node(ID="F", content="node")
         nodeA.add_successor(nodeB)
         nodeB.add_successor(nodeC)
         nodeB.add_successor(nodeD)
