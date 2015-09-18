@@ -122,12 +122,12 @@ class Translator:
                     pass
                 count += 1
             # get all of the nodes within the group
-            self.nodes = re.findall(r'[A-z]{4}\d{3,4}',
-                                    self.inputData[
-                                        (item.end() - 1):(count + 1)])
+            id_list = (re.findall(
+                r'[A-z]{4}\d{3,4}',
+                self.inputData[(item.end() - 1):(count + 1)]))
             # get the list of nodes to correspond to the group names
             self.groups[group_name] = []
-            for ID in self.nodes:
+            for ID in id_list:
                 if (ID in self.graph.nodeDict and
                         ID not in self.groups[group_name]):
                     self.groups[group_name].append(ID)
