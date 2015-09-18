@@ -137,7 +137,11 @@ class Translator:
             self.nodes = re.findall(r'[A-z]{4}\d{3,4}',
                                     map_file[(item.end() - 1):(count + 1)])
             # get the list of nodes to correspond to the group names
-            self.groups[group_name] = self.nodes
+            self.groups[group_name] = []
+            for ID in self.nodes:
+                if (ID in self.graph.nodeDict and
+                        ID not in self.groups[group_name]):
+                    self.groups[group_name].append(ID)
 
     def output_data(self):
         """This takes the information stored in the objects and
