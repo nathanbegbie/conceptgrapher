@@ -1,9 +1,6 @@
 from Graph import Graph
 from Nodes import Node
-from Nodes import FactNode
-from Nodes import ConceptNode
-from Nodes import MisconNode
-from Nodes import ScaseNode
+from Nodes import FactNode, ConceptNode, MisconNode, ScaseNode
 from Cycles import Cycles
 
 
