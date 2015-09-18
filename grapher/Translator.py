@@ -9,7 +9,11 @@ from os.path import isfile, join
 
 class Translator:
     def __init__(self):
+        """constructor which creates graph to store data
+        and arrays to store formatted data that is
+        transferred to the JSON file"""
         self.graph = Graph()
+        # Arrays for JSON data creation
         self.links = []
         self.nodes = []
         self.groups = {}
@@ -18,6 +22,10 @@ class Translator:
         """Reads in the .map file and
         stores the information in the appropriate object"""
         # get a list of the files in the directory
+
+        # change to an optional on creation of translator arg
+        testing = True
+
         mypath = path.dirname(path.realpath(__file__))
 
         print mypath
@@ -26,19 +34,30 @@ class Translator:
 
         print destination_directory
 
-        # list_of_files = [f for f in listdir(destination_directory)
-        #                  if isfile(join(destination_directory, f))]
+        list_of_files = []
+        if testing:
+            list_of_files = [f for f in ["test1.map", "test2.map"]
+                             if isfile(join(destination_directory, f))]
+        else:
+            list_of_files = [f for f in listdir(destination_directory)
+                             if isfile(join(destination_directory, f))]
 
-        # get the file
-        try:
-            f = open('FinancialMaths.map', 'r')
-        except IOError:
-            print "file read error"
-            raise SystemExit
+        for thing in list_of_files:
+            print thing
 
-        # get the first set of the groups
-        map_file = f.read()
-        f.close()
+        map_file = ""
+
+        for file_name in list_of_files:
+            if (file_name.endswith('.map')):
+                # get the file
+                try:
+                    f = open(join(destination_directory, file_name), "r")
+                    map_file += f.read()
+                    map_file += "\n"
+                    f.close()
+                except IOError:
+                    print "file read error"
+                    raise SystemExit
 
         # get all lines with node format
         node_dict = (re.findall(
@@ -121,7 +140,7 @@ class Translator:
             self.groups[group_name] = self.nodes
 
     def output_data(self):
-        """This takes the information stored in the objects and 
+        """This takes the information stored in the objects and
         outputs a json file with the appropriate data"""
         for key, value in self.graph.nodeDict.iteritems():
             typeof = ""
