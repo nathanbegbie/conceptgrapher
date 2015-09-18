@@ -59,135 +59,140 @@ class Visualizer {
     var link = visuals.selectAll(".link");
     var node = visuals.selectAll(".node");
 
-    // Start asynchronous callback for JSON data
-    $.getJSON('data.json').done( graph => {
+    try {
+      // Start asynchronous callback for JSON data
+      $.getJSON('data.json').done( graph => {
 
-      // Setup nodes and edges correctly for D3
-      var nodes = {};
-      var links = {};
+        // Setup nodes and edges correctly for D3
+        var nodes = {};
+        var links = {};
 
-      // Filter nodes based on group constraint
-      if (constraint !== null && constraint.length > 0) {
-        nodes = graph.nodes.filter( e => {
+        // Filter nodes based on group constraint
+        if (constraint !== null && constraint.length > 0) {
+          nodes = graph.nodes.filter( e => {
 
-          for (var i of e["group"]) {
-            if (constraint.indexOf(i) >= 0) {
+            for (var i of e["group"]) {
+              if (constraint.indexOf(i) >= 0) {
+                return true;
+              }
+            }
+
+            return false;
+
+          });
+
+          // Filter links based on constrained nodes
+          links = graph.links.filter( e => {
+            if (search(e["source"], nodes) >= 0 && search(e["target"], nodes) >= 0) {
               return true;
             }
+          });
+
+          // Update links to use numerical IDs for D3
+          for (var i of links) {
+            i["source"] = search(i["source"], nodes);
+            i["target"] = search(i["target"], nodes);
           }
 
-          return false;
+          // Adding links and nodes to visualization
+          force
+          .nodes(nodes)
+          .links(links)
+          .start();
 
-        });
+          // Adding links to SVG
+          link = link.data(links)
+          .enter().append("line")
+          .attr("class", d => {return "link " + d.typeof;})
+          .attr("marker-end", d => {
+            if (d.typeof === "directed") {
+              return "url(#arrowhead)";
+            }
+            else {
+              return " ";
+            }
+          });
 
-        // Filter links based on constrained nodes
-        links = graph.links.filter( e => {
-          if (search(e["source"], nodes) >= 0 && search(e["target"], nodes) >= 0) {
-            return true;
-          }
-        });
+          // Size of symbols
+          var scaleOfBigSymbols = 6;
+          var scaleOfSmallSymbols = 4;
 
-        // Update links to use numerical IDs for D3
-        for (var i of links) {
-          i["source"] = search(i["source"], nodes);
-          i["target"] = search(i["target"], nodes);
+          // Adding nodes to SVG
+          node = node.data(nodes)
+          .enter().append("g")
+          .attr("class", f => {return (f.group.join(" ") + " " + f.typeof + " node");})
+          .attr("content", f => {return f.content;})
+          .call(drag);
+
+          // Concept
+          d3.selectAll(".ConceptNode").append("path")
+          .attr("d", d3.svg.symbol().type("circle"))
+          .attr("transform", "scale(" + scaleOfBigSymbols + ")")
+          .on("dblclick", doubleClick)
+          .on("mouseover", mouseover)
+          .on("mouseout", mouseout);
+
+          // Fact
+          d3.selectAll(".FactNode").append("path")
+          .attr("d", d3.svg.symbol().type("square"))
+          .attr("transform", "scale(" + scaleOfBigSymbols + ")")
+          .on("dblclick", doubleClick)
+          .on("mouseover", mouseover)
+          .on("mouseout", mouseout);
+
+          // Scase
+          d3.selectAll(".ScaseNode").append("path")
+          .attr("d", d3.svg.symbol().type("cross"))
+          .attr("transform", "scale(" + scaleOfSmallSymbols + ")")
+          .on("dblclick", doubleClick)
+          .on("mouseover", mouseover)
+          .on("mouseout", mouseout);
+
+          // Misconcept
+          d3.selectAll(".MisconNode").append("path")
+          .attr("d", d3.svg.symbol().type("diamond"))
+          .attr("transform", "scale(" + scaleOfSmallSymbols + ")")
+          .on("dblclick", doubleClick)
+          .on("mouseover", mouseover)
+          .on("mouseout", mouseout);
+
+          // Text
+          node.append("svg:text")
+          .attr("class", "nodetext")
+          .attr("dx", 0)
+          .attr("dy", ".35em")
+          .attr("text-anchor", "middle")
+          .attr("fill", "black")
+          .text(d => {
+            return d.name
+          });
+
+        }
+        else {
+          $("#svg-wrapper").append("<div id='filter-text'><h5>To get started, use the filters on the right to select data.</h5></div>");
         }
 
-        // Adding links and nodes to visualization
-        force
-        .nodes(nodes)
-        .links(links)
-        .start();
+        // Create filtering list
+        var uniqueGroup = [];
 
-        // Adding links to SVG
-        link = link.data(links)
-        .enter().append("line")
-        .attr("class", d => {return "link " + d.typeof;})
-        .attr("marker-end", d => {
-          if (d.typeof === "directed") {
-            return "url(#arrowhead)";
-          }
-          else {
-            return " ";
-          }
-        });
-
-        // Size of symbols
-        var scaleOfBigSymbols = 6;
-        var scaleOfSmallSymbols = 4;
-
-        // Adding nodes to SVG
-        node = node.data(nodes)
-        .enter().append("g")
-        .attr("class", f => {return (f.group.join(" ") + " " + f.typeof + " node");})
-        .attr("content", f => {return f.content;})
-        .call(drag);
-
-        // Concept
-        d3.selectAll(".ConceptNode").append("path")
-        .attr("d", d3.svg.symbol().type("circle"))
-        .attr("transform", "scale(" + scaleOfBigSymbols + ")")
-        .on("dblclick", doubleClick)
-        .on("mouseover", mouseover)
-        .on("mouseout", mouseout);
-
-        // Fact
-        d3.selectAll(".FactNode").append("path")
-        .attr("d", d3.svg.symbol().type("square"))
-        .attr("transform", "scale(" + scaleOfBigSymbols + ")")
-        .on("dblclick", doubleClick)
-        .on("mouseover", mouseover)
-        .on("mouseout", mouseout);
-
-        // Scase
-        d3.selectAll(".ScaseNode").append("path")
-        .attr("d", d3.svg.symbol().type("cross"))
-        .attr("transform", "scale(" + scaleOfSmallSymbols + ")")
-        .on("dblclick", doubleClick)
-        .on("mouseover", mouseover)
-        .on("mouseout", mouseout);
-
-        // Misconcept
-        d3.selectAll(".MisconNode").append("path")
-        .attr("d", d3.svg.symbol().type("diamond"))
-        .attr("transform", "scale(" + scaleOfSmallSymbols + ")")
-        .on("dblclick", doubleClick)
-        .on("mouseover", mouseover)
-        .on("mouseout", mouseout);
-
-        // Text
-        node.append("svg:text")
-        .attr("class", "nodetext")
-        .attr("dx", 0)
-        .attr("dy", ".35em")
-        .attr("text-anchor", "middle")
-        .attr("fill", "black")
-        .text(d => {
-          return d.name
-        });
-
-      }
-      else {
-        $("#svg-wrapper").append("<div id='filter-text'><h5>To get started, use the filters on the right to select data.</h5></div>");
-      }
-
-      // Create filtering list
-      var uniqueGroup = [];
-
-      for (var i of graph.nodes) {
-        var group = i.group;
-        for (var j of group) {
-          if(uniqueGroup.indexOf(j) === -1) {
-            uniqueGroup.push(j);
+        for (var i of graph.nodes) {
+          var group = i.group;
+          for (var j of group) {
+            if(uniqueGroup.indexOf(j) === -1) {
+              uniqueGroup.push(j);
+            }
           }
         }
-      }
 
-      if (rebuild === true) {
-        buildList(uniqueGroup);
-      }
+        if (rebuild === true) {
+          buildList(uniqueGroup);
+        }
 
-    });
+      });
+    }
+    catch (e) {
+      console.log(e.name);
+    }
 
     /* ------ D3 Helper Methods ------*/
 
