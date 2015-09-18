@@ -315,7 +315,12 @@ $(document).on("mouseover", ".chip",  () => {
   var current = $(event.target).find('span').html();
   if (current !== undefined) {
     $("body").find(".node").css("fill", "#F5F5F5").css("opacity", "0.6");
-    $("body").find(`.${current}`).css("fill", "#64DD17").css("opacity", "1");
+    //$("body").find(`.${current}`).css("fill", "#64DD17").css("opacity", "1");
+    console.log($("body").find(`.ConceptNode.${current}`));
+    $("body").find(`.ConceptNode.${current}`).css("fill", "#4783c1").css("opacity", "1");
+    $("body").find(`.FactNode.${current}`).css("fill", "#FFC107").css("opacity", "1");
+    $("body").find(`.MisconNode.${current}`).css("fill", "#e76351").css("opacity", "1");
+    $("body").find(`.ScaseNode.${current}`).css("fill", "#55cd7c").css("opacity", "1");
   }
 });
 
