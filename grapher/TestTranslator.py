@@ -1,6 +1,4 @@
-from Graph import Graph
 from Nodes import FactNode, ConceptNode, MisconNode, ScaseNode
-from Edge import Edge
 from Translator import Translator
 
 
@@ -230,3 +228,101 @@ class TestTranslator:
 
         assert len(translator.graph.edgeDict) == 11
 
+    def test_group_creation(self):
+        translator = Translator()
+        translator.process_data()
+        assert "TEST000" in translator.graph.groupDict
+        assert "TEST001" in translator.graph.groupDict
+        assert "TEST002" in translator.graph.groupDict
+        assert "REST000" in translator.graph.groupDict
+        assert "REST001" in translator.graph.groupDict
+        assert "REST002" in translator.graph.groupDict
+
+        assert len(translator.graph.groupDict) == 6
+
+        assert translator.graph.groupDict["TEST000"].content == (
+            "The first group from TESTMAP")
+        assert translator.graph.groupDict["TEST001"].content == (
+            "The second group from TESTMAP")
+        assert translator.graph.groupDict["TEST002"].content == (
+            "The third group from TESTMAP")
+        assert translator.graph.groupDict["REST000"].content == (
+            "The first group from RESTMAP")
+        assert translator.graph.groupDict["REST001"].content == (
+            "The second group from RESTMAP")
+        assert translator.graph.groupDict["REST002"].content == (
+            "The third group from RESTMAP")
+
+        assert "TEST101" in translator.groups["TEST000"]
+        assert "TEST102" in translator.groups["TEST000"]
+        assert "TEST103" in translator.groups["TEST000"]
+        assert "TEST104" in translator.groups["TEST000"]
+        assert "TEST201" in translator.groups["TEST000"]
+        assert "TEST202" in translator.groups["TEST000"]
+        assert "TEST203" in translator.groups["TEST000"]
+        assert "TEST204" in translator.groups["TEST000"]
+        assert "TEST205" in translator.groups["TEST000"]
+        assert "TEST301" in translator.groups["TEST000"]
+        assert "TEST302" in translator.groups["TEST000"]
+        assert "TEST401" in translator.groups["TEST000"]
+        assert "TEST402" in translator.groups["TEST000"]
+        # make sure groups are not included
+        assert "TEST001" not in translator.groups["TEST000"]
+        assert "TEST002" not in translator.groups["TEST000"]
+
+        assert len(translator.groups["TEST000"]) == 13
+
+        assert "TEST103" in translator.groups["TEST001"]
+        assert "TEST104" in translator.groups["TEST001"]
+        assert "TEST205" in translator.groups["TEST001"]
+        assert "TEST302" in translator.groups["TEST001"]
+        assert "TEST402" in translator.groups["TEST001"]
+        assert "TEST203" in translator.groups["TEST001"]
+        assert "TEST204" in translator.groups["TEST001"]
+
+        assert "TEST002" not in translator.groups["TEST001"]
+
+        assert len(translator.groups["TEST001"]) == 7
+
+        assert "TEST104" in translator.groups["TEST002"]
+        assert "TEST203" in translator.groups["TEST002"]
+        assert "TEST204" in translator.groups["TEST002"]
+
+        assert len(translator.groups["TEST002"]) == 3
+
+        assert "REST101" in translator.groups["REST000"]
+        assert "REST102" in translator.groups["REST000"]
+        assert "REST103" in translator.groups["REST000"]
+        assert "REST104" in translator.groups["REST000"]
+        assert "REST201" in translator.groups["REST000"]
+        assert "REST202" in translator.groups["REST000"]
+        assert "REST203" in translator.groups["REST000"]
+        assert "REST204" in translator.groups["REST000"]
+        assert "REST205" in translator.groups["REST000"]
+        assert "REST301" in translator.groups["REST000"]
+        assert "REST302" in translator.groups["REST000"]
+        assert "REST401" in translator.groups["REST000"]
+        assert "REST402" in translator.groups["REST000"]
+        # make sure groups are not included
+        assert "REST001" not in translator.groups["REST000"]
+        assert "REST002" not in translator.groups["REST000"]
+
+        assert len(translator.groups["REST000"]) == 13
+
+        assert "REST103" in translator.groups["REST001"]
+        assert "REST104" in translator.groups["REST001"]
+        assert "REST205" in translator.groups["REST001"]
+        assert "REST302" in translator.groups["REST001"]
+        assert "REST402" in translator.groups["REST001"]
+        assert "REST203" in translator.groups["REST001"]
+        assert "REST204" in translator.groups["REST001"]
+
+        assert "REST002" not in translator.groups["REST001"]
+
+        assert len(translator.groups["REST001"]) == 7
+
+        assert "REST104" in translator.groups["REST002"]
+        assert "REST203" in translator.groups["REST002"]
+        assert "REST204" in translator.groups["REST002"]
+
+        assert len(translator.groups["REST002"]) == 3
