@@ -29,7 +29,8 @@ class Graph(object):
 
     def add_edge(self, sourceID, targetID):
         # check if edge exists
-        if sourceID in self.edgeDict:
+        if (sourceID in self.edgeDict and
+                targetID not in self.edgeDict[sourceID].targets):
             self.edgeDict[sourceID].targets.append(targetID)
         else:
             self.edgeDict[sourceID] = Edge(sourceID, targetID)

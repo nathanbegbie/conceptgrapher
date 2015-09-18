@@ -1,0 +1,46 @@
+RESTMAP [type="group", label="The map-group of REST group1"] {
+    /*DECLARE ALL 'Group' NODES; INDENTED Groups are Subgroups!*/
+    REST000 [type="group", label="The first group from RESTMAP"]
+    REST001 [type="group", label="The second group from RESTMAP"]
+    REST002 [type="group", label="The third group from RESTMAP"]
+
+    /*DECLARE ALL NODES*/
+    REST101 [type="concept", label="The first concept from RESTMAP"]
+    REST102 [type="concept", label="The second concept from RESTMAP"]
+    REST103 [type="concept", label="The third concept from RESTMAP"]
+    REST104 [type="concept", label="The fourth concept from RESTMAP"]
+    REST201 [type="fact", label="The first fact from RESTMAP"]
+    REST202 [type="fact", label="The second fact from RESTMAP"]
+    REST203 [type="fact", label="The third fact from RESTMAP"]
+    /* Content test here for newline characters*/
+    REST204 [type="fact", label="The fourth fact\nfrom RESTMAP"]
+    REST205 [type="fact", label="The fifth fact from RESTMAP"]
+    REST301 [type="miscon", label="The first miscon from RESTMAP"]
+    REST302 [type="miscon", label="The second miscon from RESTMAP"]
+    REST401 [type="scase", label="The first scase from RESTMAP"]
+    /* Content test here for newline characters*/
+    REST402 [type="scase", label="The second scase\nfrom RESTMAP"]
+
+    /*ORGANISE THE GROUPS*/
+    REST000 {
+        REST101 -> REST201 -> REST202
+        REST101 -> REST301
+        REST101 -> REST401
+        REST102 -> REST103
+
+        REST001{
+            REST103 -> REST104
+            REST103 -> REST205
+            REST103 -> REST302
+            REST103 -> REST402
+
+            REST002{
+                REST104 -> REST203
+                REST104 -> REST204
+            }
+        }
+    }
+}
+/*DEPENDENCIES LINKED TO ONE OF THE OTHER BIG GROUPS*/
+
+TEST204 /*[type="fact", label="The fourth fact\nfrom TESTMAP"]*/ -> REST101

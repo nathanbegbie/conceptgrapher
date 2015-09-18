@@ -2,3 +2,5 @@ ve/
 *.map
 *.pyc
 *.json
+!test_content/test1.map
+!test_content/test2.map

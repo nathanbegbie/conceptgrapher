@@ -3,36 +3,62 @@ from Graph import Graph
 from Group import Group
 from Nodes import FactNode, ConceptNode, MisconNode, ScaseNode
 import json
-from os import pardir, path
+from os import pardir, path, listdir
+from os.path import isfile, join
 
 
 class Translator:
+    def __init__(self, testing=False):
+        """constructor which creates graph to store data
+        and arrays to store formatted data that is
+        transferred to the JSON file"""
+        self.graph = Graph()
+        self.inputData = ""
+        self.testing = testing
+        # Arrays for JSON data creation
+        self.links = []
+        self.nodes = []
+        self.groups = {}
 
-    def initialise_data(self):
-        print "hello!"
-        # create the graph
-        graph = Graph()
+    def read_in_data(self):
+        """Reads the .map files into a single string"""
+        # get a list of the files in the directory
+        mypath = path.dirname(path.realpath(__file__))
 
-        # get the file
-        try:
-            f = open('FinancialMaths.map', 'r')
-        except IOError:
-            print "file read error"
-            raise SystemExit
+        destination_directory = path.join(mypath, pardir)
 
-        # get the first set of the groups
-        map_file = f.read()
-        f.close()
+        list_of_files = []
+        if self.testing:
+            destination_directory = path.join(mypath, pardir, "test_content")
+            list_of_files = [f for f in ["test1.map", "test2.map"]
+                             if isfile(join(destination_directory, f))]
+        else:
+            list_of_files = [f for f in listdir(destination_directory)
+                             if isfile(join(destination_directory, f))]
 
+        for file_name in list_of_files:
+            if (file_name.endswith('.map')):
+                # get the file
+                try:
+                    f = open(join(destination_directory, file_name), "r")
+                    self.inputData += f.read()
+                    self.inputData += "\n"
+                    f.close()
+                except IOError:
+                    print "file read error"
+                    raise SystemExit
+
+    def process_node_information(self):
+        """Finds the nodes and creates the appropriate node objects"""
         # get all lines with node format
         node_dict = (re.findall(
             r'[A-z]{4}\d{3,4}\s*\[.*type=\".*\".*label=\".*\".*]',
-            map_file))
+            self.inputData))
 
         # get all nodes with info between /* and */
         node_dict += (re.findall(
             r'[A-z]{4}\d{3,4}\s?/\*.*\*/',
-            map_file,
+            self.inputData,
             re.I | re.M))
 
         for node in node_dict:
@@ -43,42 +69,40 @@ class Translator:
                      .replace("\\n", " "))
 
             if(type == "group"):
-                graph.add_group(Group(groupID=id, content=label))
+                self.graph.add_group(Group(groupID=id, content=label))
             elif(type == "fact"):
-                graph.add_node(FactNode(ID=id, content=label))
+                self.graph.add_node(FactNode(ID=id, content=label))
             elif(type == "concept"):
-                graph.add_node(ConceptNode(ID=id, content=label))
+                self.graph.add_node(ConceptNode(ID=id, content=label))
             elif(type == "miscon"):
-                graph.add_node(MisconNode(ID=id, content=label))
+                self.graph.add_node(MisconNode(ID=id, content=label))
             elif(type == "scase"):
-                graph.add_node(ScaseNode(ID=id, content=label))
+                self.graph.add_node(ScaseNode(ID=id, content=label))
             else:
                 print "Unknown data type"
 
-        print "number of nodes", graph.numNodes
-        print "number of groups", len(graph.groupDict)
-
-        # add the edges
+    def process_edge_information(self):
+        """Finds the edges and creates the appropriate edge objects"""
         edge_dict = (re.findall(
             r'[A-z]{4}\d{3,4}\s?->\s?[A-z]{4}\d{3,4}',
-            map_file, overlapped=True))
+            self.inputData, overlapped=True))
         # edge cases
         edge_dict += (re.findall(
             r'[A-z]{3,4}\d{3,4}\s?/\*.*\*/\s?->\s?[A-z]{4}\d{3,4}',
-            map_file))
+            self.inputData))
 
         for edge in edge_dict:
             codes = re.findall(r'[A-z]{3,4}\d{3,4}', edge)
-            graph.add_edge(codes[0], codes[1])
+            self.graph.add_edge(codes[0], codes[1])
 
-        print len(graph.nodeDict)
-
-        # Get the groups
+    def process_group_information(self):
+        """Finds the groups and which nodes belong to these groups
+        and creates the appropriate graph objects"""
         group_starts = re.finditer(
             r'([A-z]{4}\d{3,4}|[A-z]{7}\s?\[.*\]\s?)\s?\{',
-            map_file)
+            self.inputData)
         # count = 0
-        groups = {}
+
         for item in group_starts:
             # get the name of the group
             group_names = re.findall(
@@ -90,7 +114,7 @@ class Translator:
             # keep track of brackets until we have a matching number
             bracket_count = 1
             while(bracket_count > 0):
-                char = map_file[count]
+                char = self.inputData[count]
                 if char == "{":
                     bracket_count += 1
                 elif char == "}":
@@ -99,17 +123,20 @@ class Translator:
                     pass
                 count += 1
             # get all of the nodes within the group
-            nodes = re.findall(r'[A-z]{4}\d{3,4}',
-                               map_file[(item.end() - 1):(count + 1)])
+            id_list = (re.findall(
+                r'[A-z]{4}\d{3,4}',
+                self.inputData[(item.end() - 1):(count + 1)]))
             # get the list of nodes to correspond to the group names
-            groups[group_name] = nodes
+            self.groups[group_name] = []
+            for ID in id_list:
+                if (ID in self.graph.nodeDict and
+                        ID not in self.groups[group_name]):
+                    self.groups[group_name].append(ID)
 
-        # CREATE THE JSON
-        # create the array of node dict
-        nodes = []
-        # iterate through the nodes
-        for key, value in graph.nodeDict.iteritems():
-
+    def process_output_data(self):
+        """Reformats the data stored in the objects into a form
+        that the front-end Javascript can work with"""
+        for key, value in self.graph.nodeDict.iteritems():
             typeof = ""
             if isinstance(value, FactNode):
                 typeof = "FactNode"
@@ -125,26 +152,23 @@ class Translator:
             nodes_groups = []
             # iterate through each group
             # see if the node belongs to the group
-            for group in groups:
-                if value.ID in groups[group]:
+            for group in self.groups:
+                if value.ID in self.groups[group]:
                     nodes_groups.append(group)
 
-            nodes.append({"name": value.ID,
-                          "group": nodes_groups,
-                          "typeof": typeof,
-                          "content": value.content})
+            self.nodes.append({"name": value.ID,
+                               "group": nodes_groups,
+                               "typeof": typeof,
+                               "content": value.content})
 
-        print len(nodes)
-
-        links = []
         # add the edges
-        for source in graph.edgeDict:
-            if source in graph.groupDict:
+        for source in self.graph.edgeDict:
+            if source in self.graph.groupDict:
                 continue
-            for target in graph.edgeDict[source].targets:
-                if target in graph.groupDict:
+            for target in self.graph.edgeDict[source].targets:
+                if target in self.graph.groupDict:
                     continue
-                value = graph.nodeDict[target]
+                value = self.graph.nodeDict[target]
                 typeof = ""
                 if (isinstance(value, FactNode) or
                         isinstance(value, ConceptNode)):
@@ -154,11 +178,13 @@ class Translator:
                     typeof = "undirected"
                 else:
                     print "Error of Node type"
-                links.append({"source": source,
-                              "target": target,
-                              "typeof": typeof})
+                self.links.append({"source": source,
+                                   "target": target,
+                                   "typeof": typeof})
 
-        data = {"nodes": nodes, "links": links}
+    def write_output_data(self):
+        """Writes to a JSON file called 'data.json'"""
+        data = {"nodes": self.nodes, "links": self.links}
 
         # set up correct file directory
         mypath = path.dirname(path.realpath(__file__))
