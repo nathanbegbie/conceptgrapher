@@ -3,7 +3,7 @@ class Node(object):
 
     Attributes:
         ID: a string representing the Node's ID (unique identifier).
-        label: a string representing the Node's description
+        content: a string representing the Node's description
         colour
         shape
         groups: a list of strings of the groups to which the node belongs
@@ -12,14 +12,11 @@ class Node(object):
         successors: A list of Node objects one edge away from the node
     """
 
-    def __init__(self, ID, label):
-        """Return a Node object with name *name* and label *label*"""
+    def __init__(self, ID, content):
+        """Return a Node object with name *name* and content *content*"""
         self.ID = ID
-        self.label = label
-        self.colour = "black"
-        self.shape = "circle"
+        self.content = content
         self.successors = {}
-        self.outDegree = 0
 
     def add_successor(self, node):
         self.successors[node.ID] = node
@@ -33,10 +30,11 @@ Attributes
     """
 
     def __init__(self, ID, content):
-        """Return a Node object with name *name* and label *label*"""
+        """Return a Node object with name *name* and content *content*"""
         # super?
         self.ID = ID
         self.content = content
+        self.successors = {}
 
 
 class MisconNode(Node):
@@ -47,9 +45,10 @@ class MisconNode(Node):
     """
 
     def __init__(self, ID, content):
-        """Return a Node object with name *name* and label *label*"""
+        """Return a Node object with name *name* and content *content*"""
         self.ID = ID
         self.content = content
+        self.successors = {}
 
 
 class ScaseNode(Node):
@@ -60,9 +59,10 @@ class ScaseNode(Node):
     """
 
     def __init__(self, ID, content):
-        """Return a Node object with name *name* and label *label*"""
+        """Return a Node object with name *name* and content *content*"""
         self.ID = ID
         self.content = content
+        self.successors = {}
 
 
 class ConceptNode(Node):
@@ -73,6 +73,7 @@ class ConceptNode(Node):
     """
 
     def __init__(self, ID, content):
-        """Return a Node object with name *name* and label *label*"""
+        """Return a Node object with name *name* and content *content*"""
         self.ID = ID
         self.content = content
+        self.successors = {}
