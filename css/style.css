@@ -124,6 +124,12 @@ text {
   height: 200px;
 }
 
+#filter-text {
+  position: fixed;
+  top: 270px;
+  left: 200px;
+}
+
 .node {
   stroke: #000000;
   stroke-width: 0.2;
