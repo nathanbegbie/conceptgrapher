@@ -29,6 +29,7 @@ class Translator:
 
         list_of_files = []
         if self.testing:
+            destination_directory = path.join(mypath, pardir, "test_content")
             list_of_files = [f for f in ["test1.map", "test2.map"]
                              if isfile(join(destination_directory, f))]
         else:
