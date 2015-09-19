@@ -187,13 +187,15 @@ class Translator:
             if not nodes_groups:
                 nodes_groups.append("Groupless")
 
+            cycle_info = "no-cycle"
             if value.ID in self.cycleNodes:
-                nodes_groups.append("isCycle")
+                cycle_info = "cycle"
 
             self.nodes.append({"name": value.ID,
                                "group": nodes_groups,
                                "typeof": typeof,
-                               "content": value.content})
+                               "content": value.content,
+                               "isCycle": cycle_info})
 
         # add the edges
         for source in self.graph.edgeDict:

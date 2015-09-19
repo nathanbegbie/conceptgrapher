@@ -388,13 +388,13 @@ class TestTranslator:
 
         for nodeInfo in translator.nodes:
             if ((nodeInfo["name"] == "CYCL101") and
-                    ("isCycle" in nodeInfo["group"])):
+                    (nodeInfo["isCycle"] == "cycle")):
                 CYCL101 = True
             elif ((nodeInfo["name"] == "CYCL102") and
-                    ("isCycle" in nodeInfo["group"])):
+                    (nodeInfo["isCycle"] == "cycle")):
                 CYCL102 = True
             elif ((nodeInfo["name"] == "CYCL103") and
-                    ("isCycle" in nodeInfo["group"])):
+                    (nodeInfo["isCycle"] == "cycle")):
                 CYCL103 = True
 
         assert CYCL101
@@ -429,23 +429,26 @@ class TestTranslator:
 
         for nodeInfo in translator.nodes:
             if ((nodeInfo["name"] == "CYCL101") and
-                    ("isCycle" in nodeInfo["group"])):
+                    (nodeInfo["isCycle"] == "cycle")):
                 CYCL101 = True
             elif ((nodeInfo["name"] == "CYCL102") and
-                    ("isCycle" in nodeInfo["group"])):
+                    (nodeInfo["isCycle"] == "cycle")):
                 CYCL102 = True
             elif ((nodeInfo["name"] == "CYCL103") and
-                    ("isCycle" in nodeInfo["group"])):
+                    (nodeInfo["isCycle"] == "cycle")):
                 CYCL103 = True
             elif ((nodeInfo["name"] == "CYCL104") and
-                    ("isCycle" in nodeInfo["group"])):
+                    (nodeInfo["isCycle"] == "cycle")):
                 CYCL104 = True
             elif ((nodeInfo["name"] == "CYCL105") and
-                    ("isCycle" in nodeInfo["group"])):
+                    (nodeInfo["isCycle"] == "cycle")):
                 CYCL105 = True
             elif ((nodeInfo["name"] == "CYCL106") and
-                    ("isCycle" in nodeInfo["group"])):
+                    (nodeInfo["isCycle"] == "cycle")):
                 CYCL106 = True
+            elif ((nodeInfo["name"] == "CYCL107") and
+                    (nodeInfo["isCycle"] == "no-cycle")):
+                CYCL107 = True
 
         assert CYCL101
         assert CYCL102
@@ -453,7 +456,7 @@ class TestTranslator:
         assert CYCL104
         assert CYCL105
         assert CYCL106
-        assert not CYCL107
+        assert CYCL107
 
     def test_node_group_dependency_filtering(self):
         translator = Translator("test3.map")
