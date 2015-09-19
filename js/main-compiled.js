@@ -146,7 +146,7 @@ var Visualizer = (function () {
 
             // Adding nodes to SVG
             node = node.data(nodes).enter().append("g").attr("class", function (f) {
-              return f.group.join(" ") + " " + f["typeof"] + " node";
+              return f.group.join(" ") + " " + f["typeof"] + " " + f.isCycle + " node";
             }).attr("content", function (f) {
               return f.content;
             }).call(drag);
@@ -410,6 +410,12 @@ $(document).on("click", ".name", function () {
   // Clear D3 SVG and run with new paramaters
   visuals.clear();
   visuals.run(output, false);
+
+  // Reset show cycles button
+  var current = $("body").find(".cycles-button");
+  current.removeClass("remove-cycles");
+  current.addClass("show-cycles");
+  $("#cycle-icon").text("visibility");
 });
 
 $(document).on("click", ".close-filter", function () {
@@ -432,6 +438,46 @@ $(document).on("click", ".close-filter", function () {
   // Clear D3 SVG and run with new paramaters
   visuals.clear();
   visuals.run(output, false);
+
+  // Reset show cycles button
+  var current = $("body").find(".cycles-button");
+  current.removeClass("remove-cycles");
+  current.addClass("show-cycles");
+  $("#cycle-icon").text("visibility");
+});
+
+$(document).on("click", ".show-cycles", function () {
+  /*
+  Handle click of show cycles button.
+  Will highlight cycles within the graph, then change the icon.
+  */
+  var current = $("body").find(".cycles-button");
+  current.removeClass("show-cycles");
+  current.addClass("remove-cycles");
+
+  $("body").find(".ConceptNode").css("fill", "#EFEFEF").css("opacity", "0.6");
+  $("body").find(".FactNode").css("fill", "#EFEFEF").css("opacity", "0.6");
+  $("body").find(".MisconNode").css("fill", "#EFEFEF").css("opacity", "0.6");
+  $("body").find(".ScaseNode").css("fill", "#EFEFEF").css("opacity", "0.6");
+
+  $("body").find(".cycle").css("fill", "#F44336").css("opacity", "1");
+  $("#cycle-icon").text("visibility_off");
+});
+
+$(document).on("click", ".remove-cycles", function () {
+  /*
+  Handle click of remove cycles button.
+  Will remove highlighted cycles within the graph.
+  */
+  var current = $("body").find(".cycles-button");
+  current.removeClass("remove-cycles");
+  current.addClass("show-cycles");
+  $("#cycle-icon").text("visibility");
+
+  $("body").find(".ConceptNode").css("fill", "#4783c1").css("opacity", "1");
+  $("body").find(".FactNode").css("fill", "#FFC107").css("opacity", "1");
+  $("body").find(".MisconNode").css("fill", "#e76351").css("opacity", "1");
+  $("body").find(".ScaseNode").css("fill", "#55cd7c").css("opacity", "1");
 });
 
 $(document).on("mouseover", ".chip", function () {
@@ -447,6 +493,12 @@ $(document).on("mouseover", ".chip", function () {
     $("body").find(".MisconNode." + current).css("fill", "#e76351").css("opacity", "1");
     $("body").find(".ScaseNode." + current).css("fill", "#55cd7c").css("opacity", "1");
   }
+
+  // Reset show cycles button
+  var current = $("body").find(".cycles-button");
+  current.removeClass("remove-cycles");
+  current.addClass("show-cycles");
+  $("#cycle-icon").text("visibility");
 });
 
 $(document).on("mouseleave", ".chip", function () {
