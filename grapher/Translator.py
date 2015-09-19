@@ -184,6 +184,9 @@ class Translator:
                 if value.ID in self.groups[group]:
                     nodes_groups.append(group)
 
+            if not nodes_groups:
+                nodes_groups.append("Groupless")
+
             if value.ID in self.cycleNodes:
                 nodes_groups.append("isCycle")
 

@@ -3,6 +3,28 @@ from Translator import Translator
 
 
 class TestTranslator:
+    def test_no_group_attribute(self):
+        translator = Translator("test2.map")
+        translator.read_in_data()
+        translator.process_node_information()
+        translator.process_edge_information()
+        translator.process_group_information()
+        translator.determine_cyclic_dependency()
+        translator.process_output_data()
+
+        groupData = False
+
+        for nodeInfo in translator.nodes:
+            if ((nodeInfo["name"] == "TEST204") and
+                    (nodeInfo["group"][0] == "Groupless")):
+                groupData = True
+            elif ((nodeInfo["name"] != "TEST204") and
+                    ("Groupless" in nodeInfo["group"])):
+                groupData = False
+                print nodeInfo
+
+        assert groupData
+
     def test_node_creation(self):
         translator = Translator("test1.map", "test2.map")
         translator.read_in_data()
@@ -507,7 +529,7 @@ class TestTranslator:
         assert "TEST204" in translator.graph.edgeDict["TEST104"].targets
         assert len(translator.graph.edgeDict["TEST104"].targets) == 2
 
-    def test_node_group_dependency_filtering(self):
+    def test_node_group_translation(self):
         translator = Translator("test1.map")
         translator.read_in_data()
         translator.process_node_information()
