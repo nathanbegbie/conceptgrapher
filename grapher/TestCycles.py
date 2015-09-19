@@ -176,8 +176,7 @@ class TestCycles:
         graph.add_node(nodeR)
         graph.add_node(nodeS)
         graph.add_node(nodeT)
-        print(Cycles().find_cycle(graph))
-        # assert Cycles().find_cycle(graph) == [('C', 'D', 'I', 'E', 'J', 'N', 'R', 'G', 'H', 'M', 'L', 'P', 'K', 'F', 'A')]
+        assert Cycles().find_cycle(graph) == [('C', 'D', 'I', 'E', 'J', 'N', 'R', 'G', 'H', 'M', 'L', 'P', 'K', 'F', 'A')]
 
     # test_single_cycle()
     # test_two_cycles()
