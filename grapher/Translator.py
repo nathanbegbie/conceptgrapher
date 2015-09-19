@@ -8,13 +8,13 @@ from os.path import isfile, join
 
 
 class Translator:
-    def __init__(self, testing=False):
+    def __init__(self, *args):
         """constructor which creates graph to store data
         and arrays to store formatted data that is
         transferred to the JSON file"""
         self.graph = Graph()
         self.inputData = ""
-        self.testing = testing
+        self.file_names = list(args)
         # Arrays for JSON data creation
         self.links = []
         self.nodes = []
@@ -28,10 +28,14 @@ class Translator:
         destination_directory = path.join(mypath, pardir)
 
         list_of_files = []
-        if self.testing:
+        if self.file_names:
             destination_directory = path.join(mypath, pardir, "test_content")
-            list_of_files = [f for f in ["test1.map", "test2.map"]
-                             if isfile(join(destination_directory, f))]
+            try:
+                list_of_files = [f for f in self.file_names
+                                 if isfile(join(destination_directory, f))]
+            except:
+                print "Error: Invalid Arguments passed to translator class"
+                raise SystemExit
         else:
             list_of_files = [f for f in listdir(destination_directory)
                              if isfile(join(destination_directory, f))]
@@ -45,7 +49,8 @@ class Translator:
                     self.inputData += "\n"
                     f.close()
                 except IOError:
-                    print "file read error"
+                    print ("File read error, check arguments passed"
+                           " to translator class")
                     raise SystemExit
 
     def process_node_information(self):

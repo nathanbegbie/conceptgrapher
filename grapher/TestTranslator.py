@@ -4,7 +4,7 @@ from Translator import Translator
 
 class TestTranslator:
     def test_node_creation(self):
-        translator = Translator(testing=True)
+        translator = Translator("test1.map", "test2.map")
         translator.read_in_data()
         translator.process_node_information()
         # test1.map
@@ -150,7 +150,7 @@ class TestTranslator:
             "The second scase from RESTMAP")
 
     def test_edge_creation(self):
-        translator = Translator(testing=True)
+        translator = Translator("test1.map", "test2.map")
         translator.read_in_data()
         translator.process_node_information()
         translator.process_edge_information()
@@ -231,7 +231,7 @@ class TestTranslator:
         assert len(translator.graph.edgeDict) == 11
 
     def test_group_creation(self):
-        translator = Translator(testing=True)
+        translator = Translator("test1.map", "test2.map")
         translator.read_in_data()
         translator.process_node_information()
         translator.process_edge_information()
