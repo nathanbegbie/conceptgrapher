@@ -73,7 +73,7 @@ class Translator:
             # get the id
             id = re.match(r'[A-z]{4}\d{3,4}', node)[0]
             type = re.search(r'type=\".*\",', node)[0][6:-2]
-            label = (re.search(r',\slabel=\".*\"', node)[0][9:-1]
+            label = (re.search(r'label=\".*\"', node)[0][7:-1]
                      .replace("\\n", " "))
 
             if(type == "group"):
