@@ -4,7 +4,7 @@ from Translator import Translator
 
 class TestTranslator:
     def test_node_creation(self):
-        translator = Translator(testing=True)
+        translator = Translator("test1.map", "test2.map")
         translator.read_in_data()
         translator.process_node_information()
         # test1.map
@@ -150,7 +150,7 @@ class TestTranslator:
             "The second scase from RESTMAP")
 
     def test_edge_creation(self):
-        translator = Translator(testing=True)
+        translator = Translator("test1.map", "test2.map")
         translator.read_in_data()
         translator.process_node_information()
         translator.process_edge_information()
@@ -231,7 +231,7 @@ class TestTranslator:
         assert len(translator.graph.edgeDict) == 11
 
     def test_group_creation(self):
-        translator = Translator(testing=True)
+        translator = Translator("test1.map", "test2.map")
         translator.read_in_data()
         translator.process_node_information()
         translator.process_edge_information()
@@ -331,3 +331,178 @@ class TestTranslator:
         assert "REST204" in translator.groups["REST002"]
 
         assert len(translator.groups["REST002"]) == 3
+
+    def test_cycle_detection_1(self):
+        translator = Translator("testcycle1.map")
+        translator.read_in_data()
+        translator.process_node_information()
+        translator.process_edge_information()
+        translator.determine_cyclic_dependency()
+        translator.process_output_data()
+
+        # Test node creation
+        assert "CYCL101" in translator.graph.nodeDict
+        assert "CYCL102" in translator.graph.nodeDict
+        assert "CYCL103" in translator.graph.nodeDict
+
+        # Test Edge Creation
+        assert "CYCL101" in translator.graph.edgeDict
+        assert "CYCL102" in translator.graph.edgeDict
+        assert "CYCL103" in translator.graph.edgeDict
+
+        # Group creation
+        assert "CYCL000" in translator.graph.groupDict
+
+        # Check cyclical nodes are there
+        assert len(translator.cycleNodes) == 3
+        assert "CYCL101" in translator.cycleNodes
+        assert "CYCL102" in translator.cycleNodes
+        assert "CYCL103" in translator.cycleNodes
+
+        # check that the 'isCycle' attribute is added to nodes
+        CYCL101 = False
+        CYCL102 = False
+        CYCL103 = False
+
+        for nodeInfo in translator.nodes:
+            if ((nodeInfo["name"] == "CYCL101") and
+                    ("isCycle" in nodeInfo["group"])):
+                CYCL101 = True
+            elif ((nodeInfo["name"] == "CYCL102") and
+                    ("isCycle" in nodeInfo["group"])):
+                CYCL102 = True
+            elif ((nodeInfo["name"] == "CYCL103") and
+                    ("isCycle" in nodeInfo["group"])):
+                CYCL103 = True
+
+        assert CYCL101
+        assert CYCL102
+        assert CYCL103
+
+    def test_cycle_detection_2(self):
+        translator = Translator("testcycle2.map")
+        translator.read_in_data()
+        translator.process_node_information()
+        translator.process_edge_information()
+        translator.determine_cyclic_dependency()
+        translator.process_output_data()
+
+        assert len(translator.cycleNodes) == 6
+        assert "CYCL101" in translator.cycleNodes
+        assert "CYCL102" in translator.cycleNodes
+        assert "CYCL103" in translator.cycleNodes
+
+        assert "CYCL104" in translator.cycleNodes
+        assert "CYCL105" in translator.cycleNodes
+        assert "CYCL106" in translator.cycleNodes
+
+        # check that the 'isCycle' attribute is added to nodes
+        CYCL101 = False
+        CYCL102 = False
+        CYCL103 = False
+        CYCL104 = False
+        CYCL105 = False
+        CYCL106 = False
+        CYCL107 = False
+
+        for nodeInfo in translator.nodes:
+            if ((nodeInfo["name"] == "CYCL101") and
+                    ("isCycle" in nodeInfo["group"])):
+                CYCL101 = True
+            elif ((nodeInfo["name"] == "CYCL102") and
+                    ("isCycle" in nodeInfo["group"])):
+                CYCL102 = True
+            elif ((nodeInfo["name"] == "CYCL103") and
+                    ("isCycle" in nodeInfo["group"])):
+                CYCL103 = True
+            elif ((nodeInfo["name"] == "CYCL104") and
+                    ("isCycle" in nodeInfo["group"])):
+                CYCL104 = True
+            elif ((nodeInfo["name"] == "CYCL105") and
+                    ("isCycle" in nodeInfo["group"])):
+                CYCL105 = True
+            elif ((nodeInfo["name"] == "CYCL106") and
+                    ("isCycle" in nodeInfo["group"])):
+                CYCL106 = True
+
+        assert CYCL101
+        assert CYCL102
+        assert CYCL103
+        assert CYCL104
+        assert CYCL105
+        assert CYCL106
+        assert not CYCL107
+
+    def test_node_group_dependency_filtering(self):
+        translator = Translator("test3.map")
+        translator.read_in_data()
+        translator.process_node_information()
+        translator.process_edge_information()
+        translator.determine_cyclic_dependency()
+        translator.process_output_data()
+
+        # Test that nodes are there
+        assert "TEST101" in translator.graph.nodeDict
+        assert "TEST102" in translator.graph.nodeDict
+        assert "TEST103" in translator.graph.nodeDict
+        assert "TEST104" in translator.graph.nodeDict
+        assert "TEST201" in translator.graph.nodeDict
+        assert "TEST202" in translator.graph.nodeDict
+        assert "TEST203" in translator.graph.nodeDict
+        assert "TEST204" in translator.graph.nodeDict
+        assert "TEST205" in translator.graph.nodeDict
+        assert "TEST301" in translator.graph.nodeDict
+        assert "TEST302" in translator.graph.nodeDict
+        assert "TEST401" in translator.graph.nodeDict
+        assert "TEST402" in translator.graph.nodeDict
+        # test that the type of node is correct
+        assert isinstance(translator.graph.nodeDict["TEST101"], ConceptNode)
+        assert isinstance(translator.graph.nodeDict["TEST102"], ConceptNode)
+        assert isinstance(translator.graph.nodeDict["TEST103"], ConceptNode)
+        assert isinstance(translator.graph.nodeDict["TEST104"], ConceptNode)
+        assert isinstance(translator.graph.nodeDict["TEST201"], FactNode)
+        assert isinstance(translator.graph.nodeDict["TEST202"], FactNode)
+        assert isinstance(translator.graph.nodeDict["TEST203"], FactNode)
+        assert isinstance(translator.graph.nodeDict["TEST204"], FactNode)
+        assert isinstance(translator.graph.nodeDict["TEST205"], FactNode)
+        assert isinstance(translator.graph.nodeDict["TEST301"], MisconNode)
+        assert isinstance(translator.graph.nodeDict["TEST302"], MisconNode)
+        assert isinstance(translator.graph.nodeDict["TEST401"], ScaseNode)
+        assert isinstance(translator.graph.nodeDict["TEST402"], ScaseNode)
+
+        # NB Test Edges
+        assert "TEST101" in translator.graph.edgeDict
+        assert "TEST201" in translator.graph.edgeDict
+        assert "TEST102" in translator.graph.edgeDict
+        assert "TEST103" in translator.graph.edgeDict
+        assert "TEST104" in translator.graph.edgeDict
+        assert "TEST001" not in translator.graph.edgeDict
+
+        assert translator.graph.edgeDict["TEST101"].source == "TEST101"
+        assert translator.graph.edgeDict["TEST201"].source == "TEST201"
+        assert translator.graph.edgeDict["TEST102"].source == "TEST102"
+        assert translator.graph.edgeDict["TEST103"].source == "TEST103"
+        assert translator.graph.edgeDict["TEST104"].source == "TEST104"
+
+        assert "TEST201" in translator.graph.edgeDict["TEST101"].targets
+        assert "TEST301" in translator.graph.edgeDict["TEST101"].targets
+        assert "TEST401" in translator.graph.edgeDict["TEST101"].targets
+        assert "TEST002" not in translator.graph.edgeDict["TEST101"].targets
+        assert len(translator.graph.edgeDict["TEST101"].targets) == 3
+
+        assert "TEST202" in translator.graph.edgeDict["TEST201"].targets
+        assert len(translator.graph.edgeDict["TEST201"].targets) == 1
+
+        assert "TEST103" in translator.graph.edgeDict["TEST102"].targets
+        assert len(translator.graph.edgeDict["TEST102"].targets) == 1
+
+        assert "TEST104" in translator.graph.edgeDict["TEST103"].targets
+        assert "TEST205" in translator.graph.edgeDict["TEST103"].targets
+        assert "TEST302" in translator.graph.edgeDict["TEST103"].targets
+        assert "TEST402" in translator.graph.edgeDict["TEST103"].targets
+        assert "TEST002" not in translator.graph.edgeDict["TEST103"].targets
+        assert len(translator.graph.edgeDict["TEST103"].targets) == 4
+
+        assert "TEST203" in translator.graph.edgeDict["TEST104"].targets
+        assert "TEST204" in translator.graph.edgeDict["TEST104"].targets
+        assert len(translator.graph.edgeDict["TEST104"].targets) == 2

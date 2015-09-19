@@ -5,7 +5,7 @@ TESTMAP [type="group", label="The map-group of test group1"] {
     TEST002 [type="group", label="The third group from TESTMAP"]
 
     /*DECLARE ALL NODES*/
-    TEST101 [type="concept",label="The first concept from TESTMAP"]
+    TEST101 [type="concept", label="The first concept from TESTMAP"]
     TEST102 [type="concept", label="The second concept from TESTMAP"]
     TEST103 [type="concept", label="The third concept from TESTMAP"]
     TEST104 [type="concept", label="The fourth concept from TESTMAP"]
@@ -40,5 +40,11 @@ TESTMAP [type="group", label="The map-group of test group1"] {
             }
         }
     }
+    /*SAMPLE: Node -> Group*/
+    TEST101 -> TEST002
+    /*SAMPLE: Node -> Group*/
+    TEST103 -> TEST002
+    /*SAMPLE: Group -> Node*/
+    TEST001 -> TEST104
 }
 /*DEPENDENCIES LINKED TO ONE OF THE OTHER BIG MATHS GROUPS*/
