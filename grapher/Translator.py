@@ -101,7 +101,9 @@ class Translator:
 
         for edge in edge_dict:
             codes = re.findall(r'[A-z]{3,4}\d{3,4}', edge)
-            self.graph.add_edge(codes[0], codes[1])
+            if (codes[0] in self.graph.nodeDict and
+                    codes[1] in self.graph.nodeDict):
+                self.graph.add_edge(codes[0], codes[1])
 
     def process_group_information(self):
         """Finds the groups and which nodes belong to these groups
