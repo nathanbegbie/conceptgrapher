@@ -1,0 +1,50 @@
+TESTMAP [type="group", label="The map-group of test group1"] {
+    /*DECLARE ALL 'Group' NODES; INDENTED Groups are Subgroups!*/
+    TEST000 [type="group", label="The first group from TESTMAP"]
+    TEST001 [type="group", label="The second group from TESTMAP"]
+    TEST002 [type="group", label="The third group from TESTMAP"]
+
+    /*DECLARE ALL NODES*/
+    TEST101 [type="concept", label="The first concept from TESTMAP"]
+    TEST102 [type="concept", label="The second concept from TESTMAP"]
+    TEST103 [type="concept", label="The third concept from TESTMAP"]
+    TEST104 [type="concept", label="The fourth concept from TESTMAP"]
+    TEST201 [type="fact", label="The first fact from TESTMAP"]
+    TEST202 [type="fact", label="The second fact from TESTMAP"]
+    TEST203 [type="fact", label="The third fact from TESTMAP"]
+    /* Content test here for newline characters*/
+    TEST204 [type="fact", label="The fourth fact\nfrom TESTMAP"]
+    TEST205 [type="fact", label="The fifth fact from TESTMAP"]
+    TEST301 [type="miscon", label="The first miscon from TESTMAP"]
+    TEST302 [type="miscon", label="The second miscon from TESTMAP"]
+    TEST401 [type="scase", label="The first scase from TESTMAP"]
+    /* Content test here for newline characters*/
+    TEST402 [type="scase", label="The second scase\nfrom TESTMAP"]
+
+    /*ORGANISE THE GROUPS*/
+    TEST000 {
+        TEST101 -> TEST201 -> TEST202
+        TEST101 -> TEST301
+        TEST101 -> TEST401
+        TEST102 -> TEST103
+
+        TEST001{
+            TEST103 -> TEST104
+            TEST103 -> TEST205
+            TEST103 -> TEST302
+            TEST103 -> TEST402
+
+            TEST002{
+                TEST104 -> TEST203
+                TEST104 -> TEST204
+            }
+        }
+    }
+    /*SAMPLE: Node -> Group*/
+    TEST101 -> TEST002
+    /*SAMPLE: Node -> Group*/
+    TEST103 -> TEST002
+    /*SAMPLE: Group -> Node*/
+    TEST001 -> TEST104
+}
+/*DEPENDENCIES LINKED TO ONE OF THE OTHER BIG MATHS GROUPS*/

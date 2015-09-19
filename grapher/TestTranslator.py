@@ -432,3 +432,77 @@ class TestTranslator:
         assert CYCL105
         assert CYCL106
         assert not CYCL107
+
+    def test_node_group_dependency_filtering(self):
+        translator = Translator("testcycle3.map")
+        translator.read_in_data()
+        translator.process_node_information()
+        translator.process_edge_information()
+        translator.determine_cyclic_dependency()
+        translator.process_output_data()
+
+        # Test that nodes are there
+        assert "TEST101" in translator.graph.nodeDict
+        assert "TEST102" in translator.graph.nodeDict
+        assert "TEST103" in translator.graph.nodeDict
+        assert "TEST104" in translator.graph.nodeDict
+        assert "TEST201" in translator.graph.nodeDict
+        assert "TEST202" in translator.graph.nodeDict
+        assert "TEST203" in translator.graph.nodeDict
+        assert "TEST204" in translator.graph.nodeDict
+        assert "TEST205" in translator.graph.nodeDict
+        assert "TEST301" in translator.graph.nodeDict
+        assert "TEST302" in translator.graph.nodeDict
+        assert "TEST401" in translator.graph.nodeDict
+        assert "TEST402" in translator.graph.nodeDict
+        # test that the type of node is correct
+        assert isinstance(translator.graph.nodeDict["TEST101"], ConceptNode)
+        assert isinstance(translator.graph.nodeDict["TEST102"], ConceptNode)
+        assert isinstance(translator.graph.nodeDict["TEST103"], ConceptNode)
+        assert isinstance(translator.graph.nodeDict["TEST104"], ConceptNode)
+        assert isinstance(translator.graph.nodeDict["TEST201"], FactNode)
+        assert isinstance(translator.graph.nodeDict["TEST202"], FactNode)
+        assert isinstance(translator.graph.nodeDict["TEST203"], FactNode)
+        assert isinstance(translator.graph.nodeDict["TEST204"], FactNode)
+        assert isinstance(translator.graph.nodeDict["TEST205"], FactNode)
+        assert isinstance(translator.graph.nodeDict["TEST301"], MisconNode)
+        assert isinstance(translator.graph.nodeDict["TEST302"], MisconNode)
+        assert isinstance(translator.graph.nodeDict["TEST401"], ScaseNode)
+        assert isinstance(translator.graph.nodeDict["TEST402"], ScaseNode)
+
+        # NB Test Edges
+        assert "TEST101" in translator.graph.edgeDict
+        assert "TEST201" in translator.graph.edgeDict
+        assert "TEST102" in translator.graph.edgeDict
+        assert "TEST103" in translator.graph.edgeDict
+        assert "TEST104" in translator.graph.edgeDict
+        assert "TEST001" not in translator.graph.edgeDict
+
+        assert translator.graph.edgeDict["TEST101"].source == "TEST101"
+        assert translator.graph.edgeDict["TEST201"].source == "TEST201"
+        assert translator.graph.edgeDict["TEST102"].source == "TEST102"
+        assert translator.graph.edgeDict["TEST103"].source == "TEST103"
+        assert translator.graph.edgeDict["TEST104"].source == "TEST104"
+
+        assert "TEST201" in translator.graph.edgeDict["TEST101"].targets
+        assert "TEST301" in translator.graph.edgeDict["TEST101"].targets
+        assert "TEST401" in translator.graph.edgeDict["TEST101"].targets
+        assert "TEST002" not in translator.graph.edgeDict["TEST101"].targets
+        assert len(translator.graph.edgeDict["TEST101"].targets) == 3
+
+        assert "TEST202" in translator.graph.edgeDict["TEST201"].targets
+        assert len(translator.graph.edgeDict["TEST201"].targets) == 1
+
+        assert "TEST103" in translator.graph.edgeDict["TEST102"].targets
+        assert len(translator.graph.edgeDict["TEST102"].targets) == 1
+
+        assert "TEST104" in translator.graph.edgeDict["TEST103"].targets
+        assert "TEST205" in translator.graph.edgeDict["TEST103"].targets
+        assert "TEST302" in translator.graph.edgeDict["TEST103"].targets
+        assert "TEST402" in translator.graph.edgeDict["TEST103"].targets
+        assert "TEST002" not in translator.graph.edgeDict["TEST103"].targets
+        assert len(translator.graph.edgeDict["TEST103"].targets) == 4
+
+        assert "TEST203" in translator.graph.edgeDict["TEST104"].targets
+        assert "TEST204" in translator.graph.edgeDict["TEST104"].targets
+        assert len(translator.graph.edgeDict["TEST104"].targets) == 2
