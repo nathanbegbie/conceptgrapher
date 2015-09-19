@@ -506,3 +506,30 @@ class TestTranslator:
         assert "TEST203" in translator.graph.edgeDict["TEST104"].targets
         assert "TEST204" in translator.graph.edgeDict["TEST104"].targets
         assert len(translator.graph.edgeDict["TEST104"].targets) == 2
+
+    def test_node_group_dependency_filtering(self):
+        translator = Translator("test1.map")
+        translator.read_in_data()
+        translator.process_node_information()
+        translator.process_edge_information()
+        translator.determine_cyclic_dependency()
+        translator.process_output_data()
+
+        TEST000 = False
+        TEST001 = False
+        TEST002 = False
+
+        for groupInfo in translator.groupData:
+            if ((groupInfo["name"] == "TEST000") and
+                    (groupInfo["content"] == "The first group from TESTMAP")):
+                TEST000 = True
+            elif ((groupInfo["name"] == "TEST001") and
+                    (groupInfo["content"] == "The second group from TESTMAP")):
+                TEST001 = True
+            elif ((groupInfo["name"] == "TEST002") and
+                    (groupInfo["content"] == "The third group from TESTMAP")):
+                TEST002 = True
+
+        assert TEST000
+        assert TEST001
+        assert TEST002
