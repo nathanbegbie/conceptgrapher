@@ -1,23 +1,29 @@
-
 var groupList;
 
 class Visualizer {
+  /*
+  The Visualizer class provides functionality for creating a D3 forced layout
+  in the DOM, as well as dynamic filtering of data.
+  */
   constructor(width, height) {
     this.width = width;
     this.height = height;
   }
 
   run(constraint, rebuild) {
+    /*
+    The priamry function for the Visualizer class. Does most of the work for setting up
+    D3 / D3Cola, and setting up the DOM. Accepts an optional list of groups to
+    filter the data by. Also accepts a boolean argument to determine if this is
+    a first-time run.
+    */
+
     // Force Setup
     var force = cola.d3adaptor()
     .size([this.width, this.height])
-    //.linkDistance(60)
-    //.avoidOverlaps(true)
-    //.symmetricDiffLinkLengths(100)
     .flowLayout('y', 30)
     .jaccardLinkLengths(100)
     .on("tick", tick);
-
 
     var drag = force.drag()
     .origin( d => { return d; })
@@ -30,7 +36,6 @@ class Visualizer {
     .attr("height", this.height)
     .call(d3.behavior.zoom().on("zoom", zoom)).on("dblclick.zoom", null);
 
-    //create a placeholder for the shape of the arrowhead
     svg.append("defs").append("marker")
     .attr("id", "arrowhead")
     .attr("refX", 20)
@@ -39,7 +44,7 @@ class Visualizer {
     .attr("markerHeight", 4)
     .attr("orient", "auto")
     .append("path")
-    .attr("d", "M 0,0 V 4 L6,2 Z"); //this is actual shape for arrowhead
+    .attr("d", "M 0,0 V 4 L6,2 Z");
 
     svg.append("rect")
     .attr("class", "background")
@@ -54,135 +59,147 @@ class Visualizer {
     var link = visuals.selectAll(".link");
     var node = visuals.selectAll(".node");
 
-    // now accept a param that chooses what to filter by
-    $.getJSON('data.json').done( graph => {
+    try {
+      // Start asynchronous callback for JSON data
+      $.getJSON('data.json').done( graph => {
 
-      // Setup nodes and edges correctly for D3
-      var nodes = {};
-      var links = {};
+        // Setup nodes and edges correctly for D3
+        var nodes = {};
+        var links = {};
 
-      // Filter nodes based on group constraint
-      if (constraint !== null && constraint.length > 0) {
-        nodes = graph.nodes.filter( e => {
+        // Filter nodes based on group constraint
+        if (constraint !== null && constraint.length > 0) {
+          nodes = graph.nodes.filter( e => {
 
-          for (var i of e["group"]) {
-            if (constraint.indexOf(i) >= 0) {
+            for (var i of e["group"]) {
+              if (constraint.indexOf(i) >= 0) {
+                return true;
+              }
+            }
+
+            return false;
+
+          });
+
+          // Filter links based on constrained nodes
+          links = graph.links.filter( e => {
+            if (search(e["source"], nodes) >= 0 && search(e["target"], nodes) >= 0) {
               return true;
             }
+          });
+
+          // Update links to use numerical IDs for D3
+          for (var i of links) {
+            i["source"] = search(i["source"], nodes);
+            i["target"] = search(i["target"], nodes);
           }
 
-          return false;
+          // Adding links and nodes to visualization
+          force
+          .nodes(nodes)
+          .links(links)
+          .start();
 
-        });
-      }
-      else {
-        nodes = graph.nodes;
-      }
+          // Adding links to SVG
+          link = link.data(links)
+          .enter().append("line")
+          .attr("class", d => {return "link " + d.typeof;})
+          .attr("marker-end", d => {
+            if (d.typeof === "directed") {
+              return "url(#arrowhead)";
+            }
+            else {
+              return " ";
+            }
+          });
 
-      // Filter links based on constrained nodes
-      links = graph.links.filter( e => {
-        if (search(e["source"], nodes) >= 0 && search(e["target"], nodes) >= 0) {
-          return true;
+          // Size of symbols
+          var scaleOfBigSymbols = 6;
+          var scaleOfSmallSymbols = 4;
+
+          // Adding nodes to SVG
+          node = node.data(nodes)
+          .enter().append("g")
+          .attr("class", f => {return (f.group.join(" ") + " " + f.typeof + " node");})
+          .attr("content", f => {return f.content;})
+          .call(drag);
+
+          // Concept
+          d3.selectAll(".ConceptNode").append("path")
+          .attr("d", d3.svg.symbol().type("circle"))
+          .attr("transform", "scale(" + scaleOfBigSymbols + ")")
+          .on("dblclick", doubleClick)
+          .on("mouseover", mouseover)
+          .on("mouseout", mouseout);
+
+          // Fact
+          d3.selectAll(".FactNode").append("path")
+          .attr("d", d3.svg.symbol().type("square"))
+          .attr("transform", "scale(" + scaleOfBigSymbols + ")")
+          .on("dblclick", doubleClick)
+          .on("mouseover", mouseover)
+          .on("mouseout", mouseout);
+
+          // Scase
+          d3.selectAll(".ScaseNode").append("path")
+          .attr("d", d3.svg.symbol().type("cross"))
+          .attr("transform", "scale(" + scaleOfSmallSymbols + ")")
+          .on("dblclick", doubleClick)
+          .on("mouseover", mouseover)
+          .on("mouseout", mouseout);
+
+          // Misconcept
+          d3.selectAll(".MisconNode").append("path")
+          .attr("d", d3.svg.symbol().type("diamond"))
+          .attr("transform", "scale(" + scaleOfSmallSymbols + ")")
+          .on("dblclick", doubleClick)
+          .on("mouseover", mouseover)
+          .on("mouseout", mouseout);
+
+          // Text
+          node.append("svg:text")
+          .attr("class", "nodetext")
+          .attr("dx", 0)
+          .attr("dy", ".35em")
+          .attr("text-anchor", "middle")
+          .attr("fill", "black")
+          .text(d => {
+            return d.name
+          });
+
         }
+        else {
+          $("#svg-wrapper").append("<div id='filter-text'><h5>To get started, use the filters on the right to select data.</h5></div>");
+        }
+
+        // Create filtering list
+        var uniqueGroup = [];
+
+        for (var i of graph.nodes) {
+          var group = i.group;
+          for (var j of group) {
+            if(uniqueGroup.indexOf(j) === -1) {
+              uniqueGroup.push(j);
+            }
+          }
+        }
+
+        if (rebuild === true) {
+          buildList(uniqueGroup);
+        }
+
       });
+    }
+    catch (e) {
+      console.log(e.name);
+    }
 
-      // Update links to use numerical IDs for D3
-      for (var i of links) {
-        i["source"] = search(i["source"], nodes);
-        i["target"] = search(i["target"], nodes);
-      }
-
-      // Adding links and nodes to visualization
-      force
-        .nodes(nodes)
-        .links(links)
-        .start();
-
-      // Adding links to SVG
-      link = link.data(links)
-        .enter().append("line")
-        .attr("class", d => {return "link " + d.typeof;})
-        .attr("marker-end", d => {
-          if (d.typeof === "directed") {
-            return "url(#arrowhead)";
-          }
-          else {
-            return " ";
-          }
-        });
-
-      // size of symbols
-      var scaleOfBigSymbols = 6;
-      var scaleOfSmallSymbols = 4;
-
-      // Adding nodes to SVG
-      node = node.data(nodes)
-        .enter().append("g")
-        .attr("class", f => {return (f.group.join(" ") + " " + f.typeof + " node");})
-        .attr("content", f => {return f.content;})
-        .call(drag);
-
-        d3.selectAll(".ConceptNode").append("path")
-        .attr("d", d3.svg.symbol().type("circle"))
-        .attr("transform", "scale(" + scaleOfBigSymbols + ")")
-        .on("dblclick", doubleClick)
-        .on("mouseover", mouseover)
-        .on("mouseout", mouseout);
-
-        //Fact
-        d3.selectAll(".FactNode").append("path")
-        .attr("d", d3.svg.symbol().type("square"))
-        .attr("transform", "scale(" + scaleOfBigSymbols + ")")
-        .on("dblclick", doubleClick)
-        .on("mouseover", mouseover)
-        .on("mouseout", mouseout);
-
-        //Scase
-        d3.selectAll(".ScaseNode").append("path")
-        .attr("d", d3.svg.symbol().type("cross"))
-        .attr("transform", "scale(" + scaleOfSmallSymbols + ")")
-        .on("dblclick", doubleClick)
-        .on("mouseover", mouseover)
-        .on("mouseout", mouseout);
-
-        d3.selectAll(".MisconNode").append("path")
-        .attr("d", d3.svg.symbol().type("diamond"))
-        .attr("transform", "scale(" + scaleOfSmallSymbols + ")")
-        .on("dblclick", doubleClick)
-        .on("mouseover", mouseover)
-        .on("mouseout", mouseout);
-
-        node.append("svg:text")
-        .attr("class", "nodetext")
-        .attr("dx", 0)
-        .attr("dy", ".35em")
-        .attr("text-anchor", "middle")
-        .attr("fill", "black")
-        .text(d => {
-          return d.name
-        });
-
-      // Calculating unique group numbers
-      var uniqueGroup = [];
-
-      for (var i of graph.nodes) {
-        var group = i.group;
-        for (var j of group) {
-          if(uniqueGroup.indexOf(j) === -1) {
-            uniqueGroup.push(j);
-          }
-        }
-      }
-
-      if (rebuild === true) {
-        buildList(uniqueGroup);
-      }
-
-    });
-
-    // D3 helper methods
+    /* ------ D3 Helper Methods ------*/
 
     function tick() {
+      /*
+      D3 method to reposition nodes through transformation.
+      */
       link.attr("x1", f => {return f.source.x;})
         .attr("y1",  f => {return f.source.y;})
         .attr("x2",  f => {return f.target.x;})
@@ -194,6 +211,11 @@ class Visualizer {
     }
 
     function mouseover(d) {
+      /*
+      Handles mouseover of a node.
+      Will cause node information to be displayed in a text area at the bottom
+      of the screen.
+      */
       var content = d.content;
 
       if (content.length > 100) {
@@ -204,32 +226,57 @@ class Visualizer {
     }
 
     function mouseout(d) {
+      /*
+      Handles mouseover of a node.
+      Will remove added descriptive data.
+      */
       $("#description").find("p").remove();
     }
 
     function zoom() {
+      /*
+      D3 method to handle zooming of the SVG panel.
+      */
       visuals.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")")
     }
 
     function dragStarting(f) {
+      /*
+      Handles the start of the drag event.
+      Stops zooming from interfering with dragging, and also sets nodes to fixed
+      to create the "sticky nodes" effect.
+      */
       d3.event.sourceEvent.stopPropagation();
       d3.select(this).classed("fixed", f.fixed = true);
       d3.select(this).classed("dragging", true);
     }
 
     function doubleClick(f) {
+      /*
+      Returns nodes to original state on double click, removing fixed status.
+      */
       d3.select(this).classed("fixed", f.fixed = false);
     }
 
     function dragging(f) {
+      /*
+      Handles repositioning of the node during the drag event.
+      */
       d3.select(this).attr("cx", f.x = d3.event.x).attr("cy", f.y = d3.event.y);
     }
 
     function dragEnding(f) {
+      /*
+      Handles the ending of the drag event.
+      */
       d3.select(this).classed("dragging", false);
     }
 
     function buildList(groups) {
+      /*
+      Builds the filtering list from a set of unique groups.
+      This list is then used by List.js to provide real-time filtering in the DOM.
+      */
 
       var options = {
         valueNames: ['name'],
@@ -245,11 +292,10 @@ class Visualizer {
       groupList.add(result);
     }
 
-    function num() {
-      return Math.floor(Math.random()*256).toString(16);
-    }
-
     function search(name, arr) {
+      /*
+      Provides a custom search for name based on the structure of the JSON objects.
+      */
       for (var i = 0; i < arr.length; i++) {
         if (arr[i]["name"] === name) {
           return i;
@@ -260,6 +306,9 @@ class Visualizer {
   }
 
   clear() {
+    /*
+    A class function to reset the DOM.
+    */
     d3.select('svg').remove();
   }
 
@@ -271,6 +320,14 @@ visuals.run(null, true);
 
 
 $(document).on("click", ".name", () => {
+  /*
+  Handles addition of filter.
+  Will add new filter to the DOM, remove it from the main list, and will
+  reset D3 to show the change.
+  */
+
+  // Remove filtering how-to
+  $("body").find("#filter-text").remove();
 
   // Move group from selectable to filter
   var current = $(event.target).text();
@@ -279,7 +336,6 @@ $(document).on("click", ".name", () => {
 
   // Build list of items to filter by
   var output = [];
-
   var currentGroups = $(".filtered-by").each( (i, o) => {
     output.push(o.textContent);
   });
@@ -291,15 +347,16 @@ $(document).on("click", ".name", () => {
 });
 
 $(document).on("click", ".close-filter", () => {
-  // Get removed group
+  /*
+  Handles removal of filter.
+  Will remove filter from DOM, add it back to the main list, and will
+  reset D3.
+  */
   var current = $(event.target).parent().find('span').text();
-
-  // Add back to list
   groupList.add([{name: current}]);
 
   // Build list of items to filter by
   var output = [];
-
   var currentGroups = $(".filtered-by").each( (i, o) => {
     output.push(o.textContent);
   });
@@ -312,11 +369,13 @@ $(document).on("click", ".close-filter", () => {
 });
 
 $(document).on("mouseover", ".chip",  () => {
+  /*
+  Handle mouseover event of filters.
+  Will fade unselected groups by reducing opacity.
+  */
   var current = $(event.target).find('span').html();
   if (current !== undefined) {
     $("body").find(".node").css("fill", "#F5F5F5").css("opacity", "0.6");
-    //$("body").find(`.${current}`).css("fill", "#64DD17").css("opacity", "1");
-    console.log($("body").find(`.ConceptNode.${current}`));
     $("body").find(`.ConceptNode.${current}`).css("fill", "#4783c1").css("opacity", "1");
     $("body").find(`.FactNode.${current}`).css("fill", "#FFC107").css("opacity", "1");
     $("body").find(`.MisconNode.${current}`).css("fill", "#e76351").css("opacity", "1");
@@ -325,6 +384,10 @@ $(document).on("mouseover", ".chip",  () => {
 });
 
 $(document).on("mouseleave", ".chip",  () => {
+  /*
+  Handle mouseleave event of filters.
+  Will return faded groups to normal opacity.
+  */
     $("body").find(".ConceptNode").css("fill", "#4783c1").css("opacity", "1");
     $("body").find(".FactNode").css("fill", "#FFC107").css("opacity", "1");
     $("body").find(".MisconNode").css("fill", "#e76351").css("opacity", "1");
