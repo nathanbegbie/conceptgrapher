@@ -1,0 +1,17 @@
+CYCLMAP [type="group", label="The map-group of test group1"] {
+    /*DECLARE ALL 'Group' NODES; INDENTED Groups are Subgroups!*/
+    CYCL000 [type="group", label="The first group from CYCLMAP"]
+
+    /*DECLARE ALL NODES*/
+    CYCL101 [type="concept", label="The first concept from CYCLMAP"]
+    CYCL102 [type="concept", label="The second concept from CYCLMAP"]
+    CYCL103 [type="concept", label="The third concept from CYCLMAP"]
+
+    /*ORGANISE THE GROUPS*/
+    CYCL000 {
+        CYCL101 -> CYCL102
+        CYCL102 -> CYCL103
+        CYCL103 -> CYCL101
+    }
+}
+/*DEPENDENCIES LINKED TO ONE OF THE OTHER BIG MATHS GROUPS*/

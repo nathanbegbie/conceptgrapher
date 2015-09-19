@@ -1,24 +1,27 @@
 import regex as re
-from Graph import Graph
-from Group import Group
-from Nodes import FactNode, ConceptNode, MisconNode, ScaseNode
 import json
 from os import pardir, path, listdir
 from os.path import isfile, join
 
+from Graph import Graph
+from Group import Group
+from Nodes import FactNode, ConceptNode, MisconNode, ScaseNode
+from Cycles import Cycles
+
 
 class Translator:
-    def __init__(self, testing=False):
+    def __init__(self, *args):
         """constructor which creates graph to store data
         and arrays to store formatted data that is
         transferred to the JSON file"""
         self.graph = Graph()
         self.inputData = ""
-        self.testing = testing
+        self.file_names = list(args)
         # Arrays for JSON data creation
         self.links = []
         self.nodes = []
         self.groups = {}
+        self.cycleNodes = []
 
     def read_in_data(self):
         """Reads the .map files into a single string"""
@@ -28,10 +31,14 @@ class Translator:
         destination_directory = path.join(mypath, pardir)
 
         list_of_files = []
-        if self.testing:
+        if self.file_names:
             destination_directory = path.join(mypath, pardir, "test_content")
-            list_of_files = [f for f in ["test1.map", "test2.map"]
-                             if isfile(join(destination_directory, f))]
+            try:
+                list_of_files = [f for f in self.file_names
+                                 if isfile(join(destination_directory, f))]
+            except:
+                print "Error: Invalid Arguments passed to translator class"
+                raise SystemExit
         else:
             list_of_files = [f for f in listdir(destination_directory)
                              if isfile(join(destination_directory, f))]
@@ -45,7 +52,8 @@ class Translator:
                     self.inputData += "\n"
                     f.close()
                 except IOError:
-                    print "file read error"
+                    print ("File read error, check arguments passed"
+                           " to translator class")
                     raise SystemExit
 
     def process_node_information(self):
@@ -65,7 +73,7 @@ class Translator:
             # get the id
             id = re.match(r'[A-z]{4}\d{3,4}', node)[0]
             type = re.search(r'type=\".*\",', node)[0][6:-2]
-            label = (re.search(r',\slabel=\".*\"', node)[0][9:-1]
+            label = (re.search(r'label=\".*\"', node)[0][7:-1]
                      .replace("\\n", " "))
 
             if(type == "group"):
@@ -93,7 +101,9 @@ class Translator:
 
         for edge in edge_dict:
             codes = re.findall(r'[A-z]{3,4}\d{3,4}', edge)
-            self.graph.add_edge(codes[0], codes[1])
+            if (codes[0] in self.graph.nodeDict and
+                    codes[1] in self.graph.nodeDict):
+                self.graph.add_edge(codes[0], codes[1])
 
     def process_group_information(self):
         """Finds the groups and which nodes belong to these groups
@@ -133,6 +143,23 @@ class Translator:
                         ID not in self.groups[group_name]):
                     self.groups[group_name].append(ID)
 
+    def determine_cyclic_dependency(self):
+        """uses the stored, object information and the Cycle class to store
+        any nodes that are part of a cyclical dependency"""
+        cycle_object = Cycles()
+
+        for node in self.graph.nodeDict:
+            if node in self.graph.edgeDict:
+                for edge in self.graph.edgeDict[node].targets:
+                    # This check must be removed if we
+                    # incorporate group edges into overall design
+                    if edge not in self.graph.groupDict:
+                        self.graph.nodeDict[node].add_successor(
+                            self.graph.nodeDict[edge])
+
+        self.cycleNodes = list(
+            set(sum(cycle_object.find_cycle(self.graph), ())))
+
     def process_output_data(self):
         """Reformats the data stored in the objects into a form
         that the front-end Javascript can work with"""
@@ -156,10 +183,15 @@ class Translator:
                 if value.ID in self.groups[group]:
                     nodes_groups.append(group)
 
+            cycle_info = "no-cycle"
+            if value.ID in self.cycleNodes:
+                cycle_info = "cycle"
+
             self.nodes.append({"name": value.ID,
                                "group": nodes_groups,
                                "typeof": typeof,
-                               "content": value.content})
+                               "content": value.content,
+                               "isCycle": cycle_info})
 
         # add the edges
         for source in self.graph.edgeDict:
