@@ -178,6 +178,9 @@ class Translator:
                 if value.ID in self.groups[group]:
                     nodes_groups.append(group)
 
+            if value.ID in self.cycleNodes:
+                nodes_groups.append("isCycle")
+
             self.nodes.append({"name": value.ID,
                                "group": nodes_groups,
                                "typeof": typeof,

@@ -338,6 +338,7 @@ class TestTranslator:
         translator.process_node_information()
         translator.process_edge_information()
         translator.determine_cyclic_dependency()
+        translator.process_output_data()
 
         # Test node creation
         assert "CYCL101" in translator.graph.nodeDict
@@ -358,12 +359,33 @@ class TestTranslator:
         assert "CYCL102" in translator.cycleNodes
         assert "CYCL103" in translator.cycleNodes
 
+        # check that the 'isCycle' attribute is added to nodes
+        CYCL101 = False
+        CYCL102 = False
+        CYCL103 = False
+
+        for nodeInfo in translator.nodes:
+            if ((nodeInfo["name"] == "CYCL101") and
+                    ("isCycle" in nodeInfo["group"])):
+                CYCL101 = True
+            elif ((nodeInfo["name"] == "CYCL102") and
+                    ("isCycle" in nodeInfo["group"])):
+                CYCL102 = True
+            elif ((nodeInfo["name"] == "CYCL103") and
+                    ("isCycle" in nodeInfo["group"])):
+                CYCL103 = True
+
+        assert CYCL101
+        assert CYCL102
+        assert CYCL103
+
     def test_cycle_detection_2(self):
         translator = Translator("testcycle2.map")
         translator.read_in_data()
         translator.process_node_information()
         translator.process_edge_information()
         translator.determine_cyclic_dependency()
+        translator.process_output_data()
 
         assert len(translator.cycleNodes) == 6
         assert "CYCL101" in translator.cycleNodes
@@ -373,3 +395,40 @@ class TestTranslator:
         assert "CYCL104" in translator.cycleNodes
         assert "CYCL105" in translator.cycleNodes
         assert "CYCL106" in translator.cycleNodes
+
+        # check that the 'isCycle' attribute is added to nodes
+        CYCL101 = False
+        CYCL102 = False
+        CYCL103 = False
+        CYCL104 = False
+        CYCL105 = False
+        CYCL106 = False
+        CYCL107 = False
+
+        for nodeInfo in translator.nodes:
+            if ((nodeInfo["name"] == "CYCL101") and
+                    ("isCycle" in nodeInfo["group"])):
+                CYCL101 = True
+            elif ((nodeInfo["name"] == "CYCL102") and
+                    ("isCycle" in nodeInfo["group"])):
+                CYCL102 = True
+            elif ((nodeInfo["name"] == "CYCL103") and
+                    ("isCycle" in nodeInfo["group"])):
+                CYCL103 = True
+            elif ((nodeInfo["name"] == "CYCL104") and
+                    ("isCycle" in nodeInfo["group"])):
+                CYCL104 = True
+            elif ((nodeInfo["name"] == "CYCL105") and
+                    ("isCycle" in nodeInfo["group"])):
+                CYCL105 = True
+            elif ((nodeInfo["name"] == "CYCL106") and
+                    ("isCycle" in nodeInfo["group"])):
+                CYCL106 = True
+
+        assert CYCL101
+        assert CYCL102
+        assert CYCL103
+        assert CYCL104
+        assert CYCL105
+        assert CYCL106
+        assert not CYCL107
