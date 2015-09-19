@@ -1,4 +1,5 @@
 var groupList;
+var groupAttr;
 
 class Visualizer {
   /*
@@ -66,6 +67,7 @@ class Visualizer {
         // Setup nodes and edges correctly for D3
         var nodes = {};
         var links = {};
+        groupAttr = graph.groups;
 
         // Filter nodes based on group constraint
         if (constraint !== null && constraint.length > 0) {
@@ -377,6 +379,9 @@ $(document).on("click", ".close-filter", () => {
   current.removeClass("remove-cycles");
   current.addClass("show-cycles");
   $("#cycle-icon").text("visibility");
+
+  // Remove any descriptive text
+  $("#description").find("p").remove();
 });
 
 $(document).on("click", ".show-cycles",  () => {
@@ -413,7 +418,7 @@ $(document).on("click", ".remove-cycles",  () => {
   $("body").find(".ScaseNode").css("fill", "#55cd7c").css("opacity", "1");
 });
 
-$(document).on("mouseover", ".chip",  () => {
+$(document).on("mouseenter", ".chip",  () => {
   /*
   Handle mouseover event of filters.
   Will fade unselected groups by reducing opacity.
@@ -426,6 +431,22 @@ $(document).on("mouseover", ".chip",  () => {
     $("body").find(`.MisconNode.${current}`).css("fill", "#e76351").css("opacity", "1");
     $("body").find(`.ScaseNode.${current}`).css("fill", "#55cd7c").css("opacity", "1");
   }
+  var content;
+
+  if (current !== undefined || null) {
+    for (var i of groupAttr) {
+      if (i.name === current) {
+        content = i.content;
+      }
+    }
+
+    if (content === undefined) {
+      content = "";
+    }
+
+    $("#description").append(`<p class="valign"><span class="highlight"><b>${current}</b></span> ${content}</p>`);
+  }
+
 
   // Reset show cycles button
   var current = $("body").find(".cycles-button");
@@ -439,8 +460,10 @@ $(document).on("mouseleave", ".chip",  () => {
   Handle mouseleave event of filters.
   Will return faded groups to normal opacity.
   */
-    $("body").find(".ConceptNode").css("fill", "#4783c1").css("opacity", "1");
-    $("body").find(".FactNode").css("fill", "#FFC107").css("opacity", "1");
-    $("body").find(".MisconNode").css("fill", "#e76351").css("opacity", "1");
-    $("body").find(".ScaseNode").css("fill", "#55cd7c").css("opacity", "1");
+  $("#description").find("p").remove();
+
+  $("body").find(".ConceptNode").css("fill", "#4783c1").css("opacity", "1");
+  $("body").find(".FactNode").css("fill", "#FFC107").css("opacity", "1");
+  $("body").find(".MisconNode").css("fill", "#e76351").css("opacity", "1");
+  $("body").find(".ScaseNode").css("fill", "#55cd7c").css("opacity", "1");
 });

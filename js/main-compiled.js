@@ -5,6 +5,7 @@ var _createClass = (function () { function defineProperties(target, props) { for
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var groupList;
+var groupAttr;
 
 var Visualizer = (function () {
   /*
@@ -56,6 +57,7 @@ var Visualizer = (function () {
           // Setup nodes and edges correctly for D3
           var nodes = {};
           var links = {};
+          groupAttr = graph.groups;
 
           // Filter nodes based on group constraint
           if (constraint !== null && constraint.length > 0) {
@@ -444,6 +446,9 @@ $(document).on("click", ".close-filter", function () {
   current.removeClass("remove-cycles");
   current.addClass("show-cycles");
   $("#cycle-icon").text("visibility");
+
+  // Remove any descriptive text
+  $("#description").find("p").remove();
 });
 
 $(document).on("click", ".show-cycles", function () {
@@ -480,7 +485,7 @@ $(document).on("click", ".remove-cycles", function () {
   $("body").find(".ScaseNode").css("fill", "#55cd7c").css("opacity", "1");
 });
 
-$(document).on("mouseover", ".chip", function () {
+$(document).on("mouseenter", ".chip", function () {
   /*
   Handle mouseover event of filters.
   Will fade unselected groups by reducing opacity.
@@ -492,6 +497,42 @@ $(document).on("mouseover", ".chip", function () {
     $("body").find(".FactNode." + current).css("fill", "#FFC107").css("opacity", "1");
     $("body").find(".MisconNode." + current).css("fill", "#e76351").css("opacity", "1");
     $("body").find(".ScaseNode." + current).css("fill", "#55cd7c").css("opacity", "1");
+  }
+  var content;
+
+  if (current !== undefined || null) {
+    var _iteratorNormalCompletion6 = true;
+    var _didIteratorError6 = false;
+    var _iteratorError6 = undefined;
+
+    try {
+      for (var _iterator6 = groupAttr[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+        var i = _step6.value;
+
+        if (i.name === current) {
+          content = i.content;
+        }
+      }
+    } catch (err) {
+      _didIteratorError6 = true;
+      _iteratorError6 = err;
+    } finally {
+      try {
+        if (!_iteratorNormalCompletion6 && _iterator6["return"]) {
+          _iterator6["return"]();
+        }
+      } finally {
+        if (_didIteratorError6) {
+          throw _iteratorError6;
+        }
+      }
+    }
+
+    if (content === undefined) {
+      content = "";
+    }
+
+    $("#description").append("<p class=\"valign\"><span class=\"highlight\"><b>" + current + "</b></span> " + content + "</p>");
   }
 
   // Reset show cycles button
@@ -506,6 +547,8 @@ $(document).on("mouseleave", ".chip", function () {
   Handle mouseleave event of filters.
   Will return faded groups to normal opacity.
   */
+  $("#description").find("p").remove();
+
   $("body").find(".ConceptNode").css("fill", "#4783c1").css("opacity", "1");
   $("body").find(".FactNode").css("fill", "#FFC107").css("opacity", "1");
   $("body").find(".MisconNode").css("fill", "#e76351").css("opacity", "1");
