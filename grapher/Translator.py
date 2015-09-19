@@ -149,8 +149,11 @@ class Translator:
         for node in self.graph.nodeDict:
             if node in self.graph.edgeDict:
                 for edge in self.graph.edgeDict[node].targets:
-                    self.graph.nodeDict[node].add_successor(
-                        self.graph.nodeDict[edge])
+                    # This check must be removed if we
+                    # incorporate group edges into overall design
+                    if edge not in self.graph.groupDict:
+                        self.graph.nodeDict[node].add_successor(
+                            self.graph.nodeDict[edge])
 
         self.cycleNodes = list(
             set(sum(cycle_object.find_cycle(self.graph), ())))
