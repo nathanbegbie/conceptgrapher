@@ -331,3 +331,45 @@ class TestTranslator:
         assert "REST204" in translator.groups["REST002"]
 
         assert len(translator.groups["REST002"]) == 3
+
+    def test_cycle_detection_1(self):
+        translator = Translator("testcycle1.map")
+        translator.read_in_data()
+        translator.process_node_information()
+        translator.process_edge_information()
+        translator.determine_cyclic_dependency()
+
+        # Test node creation
+        assert "CYCL101" in translator.graph.nodeDict
+        assert "CYCL102" in translator.graph.nodeDict
+        assert "CYCL103" in translator.graph.nodeDict
+
+        # Test Edge Creation
+        assert "CYCL101" in translator.graph.edgeDict
+        assert "CYCL102" in translator.graph.edgeDict
+        assert "CYCL103" in translator.graph.edgeDict
+
+        # Group creation
+        assert "CYCL000" in translator.graph.groupDict
+
+        # Check cyclical nodes are there
+        assert len(translator.cycleNodes) == 3
+        assert "CYCL101" in translator.cycleNodes
+        assert "CYCL102" in translator.cycleNodes
+        assert "CYCL103" in translator.cycleNodes
+
+    def test_cycle_detection_2(self):
+        translator = Translator("testcycle2.map")
+        translator.read_in_data()
+        translator.process_node_information()
+        translator.process_edge_information()
+        translator.determine_cyclic_dependency()
+
+        assert len(translator.cycleNodes) == 6
+        assert "CYCL101" in translator.cycleNodes
+        assert "CYCL102" in translator.cycleNodes
+        assert "CYCL103" in translator.cycleNodes
+
+        assert "CYCL104" in translator.cycleNodes
+        assert "CYCL105" in translator.cycleNodes
+        assert "CYCL106" in translator.cycleNodes

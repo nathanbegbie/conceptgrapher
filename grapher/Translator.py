@@ -1,10 +1,12 @@
 import regex as re
-from Graph import Graph
-from Group import Group
-from Nodes import FactNode, ConceptNode, MisconNode, ScaseNode
 import json
 from os import pardir, path, listdir
 from os.path import isfile, join
+
+from Graph import Graph
+from Group import Group
+from Nodes import FactNode, ConceptNode, MisconNode, ScaseNode
+from Cycles import Cycles
 
 
 class Translator:
@@ -19,6 +21,7 @@ class Translator:
         self.links = []
         self.nodes = []
         self.groups = {}
+        self.cycleNodes = []
 
     def read_in_data(self):
         """Reads the .map files into a single string"""
@@ -137,6 +140,20 @@ class Translator:
                 if (ID in self.graph.nodeDict and
                         ID not in self.groups[group_name]):
                     self.groups[group_name].append(ID)
+
+    def determine_cyclic_dependency(self):
+        """uses the stored, object information and the Cycle class to store
+        any nodes that are part of a cyclical dependency"""
+        cycle_object = Cycles()
+
+        for node in self.graph.nodeDict:
+            if node in self.graph.edgeDict:
+                for edge in self.graph.edgeDict[node].targets:
+                    self.graph.nodeDict[node].add_successor(
+                        self.graph.nodeDict[edge])
+
+        self.cycleNodes = list(
+            set(sum(cycle_object.find_cycle(self.graph), ())))
 
     def process_output_data(self):
         """Reformats the data stored in the objects into a form
