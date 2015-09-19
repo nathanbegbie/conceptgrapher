@@ -434,7 +434,7 @@ class TestTranslator:
         assert not CYCL107
 
     def test_node_group_dependency_filtering(self):
-        translator = Translator("testcycle3.map")
+        translator = Translator("test3.map")
         translator.read_in_data()
         translator.process_node_information()
         translator.process_edge_information()
