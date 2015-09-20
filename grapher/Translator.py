@@ -21,6 +21,7 @@ class Translator:
         self.links = []
         self.nodes = []
         self.groups = {}
+        self.groupData = []
         self.cycleNodes = []
 
     def read_in_data(self):
@@ -183,6 +184,9 @@ class Translator:
                 if value.ID in self.groups[group]:
                     nodes_groups.append(group)
 
+            if not nodes_groups:
+                nodes_groups.append("Groupless")
+
             cycle_info = "no-cycle"
             if value.ID in self.cycleNodes:
                 cycle_info = "cycle"
@@ -214,9 +218,16 @@ class Translator:
                                    "target": target,
                                    "typeof": typeof})
 
+        # add group info
+        for key, value in self.graph.groupDict.iteritems():
+            self.groupData.append({"name": value.groupID,
+                                   "content": value.content})
+
     def write_output_data(self):
         """Writes to a JSON file called 'data.json'"""
-        data = {"nodes": self.nodes, "links": self.links}
+        data = {"nodes": self.nodes,
+                "links": self.links,
+                "groups": self.groupData}
 
         # set up correct file directory
         mypath = path.dirname(path.realpath(__file__))

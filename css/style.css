@@ -43,6 +43,12 @@ a {
   cursor: pointer;
 }
 
+.cycles-button {
+  bottom: 70px;
+  left: 24px;
+  position: fixed;
+}
+
 .input-field {
   margin-top: 0px;
 }
