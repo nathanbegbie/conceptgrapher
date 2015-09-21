@@ -1,5 +1,6 @@
 var groupList;
 var groupAttr;
+var nodes;
 
 class Visualizer {
   /*
@@ -65,7 +66,7 @@ class Visualizer {
       $.getJSON('data.json').done( graph => {
 
         // Setup nodes and edges correctly for D3
-        var nodes = {};
+        nodes = {};
         var links = {};
         groupAttr = graph.groups;
 
@@ -219,12 +220,23 @@ class Visualizer {
       of the screen.
       */
       var content = d.content;
+      var currentGroups
+
+      for (var i of nodes) {
+        if (i.name === d.name) {
+          currentGroups = i.group.join(" ");
+        }
+      }
 
       if (content.length > 100) {
         content = content.substring(0, 105) + "....";
       }
 
-      $("#description").append(`<p class="valign"><span class="highlight"><b>${d.name}</b></span> ${content}</p>`);
+      if (currentGroups.length > 100) {
+        currentGroups = currentGroups.substring(0, 105) + "....";
+      }
+
+      $("#description").append(`<div class="valign"><p><span class="highlight"><b>${d.name}</b></span> ${content}</p><p><span class="highlight"><b>Groups</b></span> ${currentGroups}</p>`);
     }
 
     function mouseout(d) {
@@ -317,7 +329,7 @@ class Visualizer {
 }
 
 // Instantiation of visualizer
-let visuals = new Visualizer($("#svg-wrapper").width(), $(window).height() - 60);
+let visuals = new Visualizer($("#svg-wrapper").width(), $(window).height() - 88);
 visuals.run(null, true);
 
 
@@ -399,7 +411,7 @@ $(document).on("click", ".show-cycles",  () => {
   $("body").find(`.ScaseNode`).css("fill", "#EFEFEF").css("opacity", "0.6");
 
   $("body").find(".cycle").css("fill", "#F44336").css("opacity", "1");
-  $("#cycle-icon").text("visibility_off");
+  $("#cycle-button").text("Remove Cycles");
 });
 
 $(document).on("click", ".remove-cycles",  () => {
@@ -410,7 +422,7 @@ $(document).on("click", ".remove-cycles",  () => {
   var current = $("body").find(".cycles-button");
   current.removeClass("remove-cycles");
   current.addClass("show-cycles");
-  $("#cycle-icon").text("visibility");
+  $("#cycle-button").text("Show Cycles");
 
   $("body").find(".ConceptNode").css("fill", "#4783c1").css("opacity", "1");
   $("body").find(".FactNode").css("fill", "#FFC107").css("opacity", "1");
