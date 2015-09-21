@@ -6,6 +6,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var groupList;
 var groupAttr;
+var nodes;
 
 var Visualizer = (function () {
   /*
@@ -55,7 +56,7 @@ var Visualizer = (function () {
         $.getJSON('data.json').done(function (graph) {
 
           // Setup nodes and edges correctly for D3
-          var nodes = {};
+          nodes = {};
           var links = {};
           groupAttr = graph.groups;
 
@@ -263,12 +264,44 @@ var Visualizer = (function () {
         of the screen.
         */
         var content = d.content;
+        var currentGroups;
+
+        var _iteratorNormalCompletion5 = true;
+        var _didIteratorError5 = false;
+        var _iteratorError5 = undefined;
+
+        try {
+          for (var _iterator5 = nodes[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+            var i = _step5.value;
+
+            if (i.name === d.name) {
+              currentGroups = i.group.join(" ");
+            }
+          }
+        } catch (err) {
+          _didIteratorError5 = true;
+          _iteratorError5 = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion5 && _iterator5["return"]) {
+              _iterator5["return"]();
+            }
+          } finally {
+            if (_didIteratorError5) {
+              throw _iteratorError5;
+            }
+          }
+        }
 
         if (content.length > 100) {
           content = content.substring(0, 105) + "....";
         }
 
-        $("#description").append("<p class=\"valign\"><span class=\"highlight\"><b>" + d.name + "</b></span> " + content + "</p>");
+        if (currentGroups.length > 100) {
+          currentGroups = currentGroups.substring(0, 105) + "....";
+        }
+
+        $("#description").append("<div class=\"valign\"><p><span class=\"highlight\"><b>" + d.name + "</b></span> " + content + "</p><p><span class=\"highlight\"><b>Groups</b></span> " + currentGroups + "</p>");
       }
 
       function mouseout(d) {
@@ -332,27 +365,27 @@ var Visualizer = (function () {
         groupList = new List('groups', options);
         var result = [];
 
-        var _iteratorNormalCompletion5 = true;
-        var _didIteratorError5 = false;
-        var _iteratorError5 = undefined;
+        var _iteratorNormalCompletion6 = true;
+        var _didIteratorError6 = false;
+        var _iteratorError6 = undefined;
 
         try {
-          for (var _iterator5 = groups[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-            var i = _step5.value;
+          for (var _iterator6 = groups[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+            var i = _step6.value;
 
             result.push({ name: i });
           }
         } catch (err) {
-          _didIteratorError5 = true;
-          _iteratorError5 = err;
+          _didIteratorError6 = true;
+          _iteratorError6 = err;
         } finally {
           try {
-            if (!_iteratorNormalCompletion5 && _iterator5["return"]) {
-              _iterator5["return"]();
+            if (!_iteratorNormalCompletion6 && _iterator6["return"]) {
+              _iterator6["return"]();
             }
           } finally {
-            if (_didIteratorError5) {
-              throw _iteratorError5;
+            if (_didIteratorError6) {
+              throw _iteratorError6;
             }
           }
         }
@@ -385,7 +418,7 @@ var Visualizer = (function () {
   return Visualizer;
 })();
 
-var visuals = new Visualizer($("#svg-wrapper").width(), $(window).height() - 60);
+var visuals = new Visualizer($("#svg-wrapper").width(), $(window).height() - 88);
 visuals.run(null, true);
 
 $(document).on("click", ".name", function () {
@@ -466,7 +499,7 @@ $(document).on("click", ".show-cycles", function () {
   $("body").find(".ScaseNode").css("fill", "#EFEFEF").css("opacity", "0.6");
 
   $("body").find(".cycle").css("fill", "#F44336").css("opacity", "1");
-  $("#cycle-icon").text("visibility_off");
+  $("#cycle-button").text("Remove Cycles");
 });
 
 $(document).on("click", ".remove-cycles", function () {
@@ -477,7 +510,7 @@ $(document).on("click", ".remove-cycles", function () {
   var current = $("body").find(".cycles-button");
   current.removeClass("remove-cycles");
   current.addClass("show-cycles");
-  $("#cycle-icon").text("visibility");
+  $("#cycle-button").text("Show Cycles");
 
   $("body").find(".ConceptNode").css("fill", "#4783c1").css("opacity", "1");
   $("body").find(".FactNode").css("fill", "#FFC107").css("opacity", "1");
@@ -501,29 +534,29 @@ $(document).on("mouseenter", ".chip", function () {
   var content;
 
   if (current !== undefined || null) {
-    var _iteratorNormalCompletion6 = true;
-    var _didIteratorError6 = false;
-    var _iteratorError6 = undefined;
+    var _iteratorNormalCompletion7 = true;
+    var _didIteratorError7 = false;
+    var _iteratorError7 = undefined;
 
     try {
-      for (var _iterator6 = groupAttr[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
-        var i = _step6.value;
+      for (var _iterator7 = groupAttr[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+        var i = _step7.value;
 
         if (i.name === current) {
           content = i.content;
         }
       }
     } catch (err) {
-      _didIteratorError6 = true;
-      _iteratorError6 = err;
+      _didIteratorError7 = true;
+      _iteratorError7 = err;
     } finally {
       try {
-        if (!_iteratorNormalCompletion6 && _iterator6["return"]) {
-          _iterator6["return"]();
+        if (!_iteratorNormalCompletion7 && _iterator7["return"]) {
+          _iterator7["return"]();
         }
       } finally {
-        if (_didIteratorError6) {
-          throw _iteratorError6;
+        if (_didIteratorError7) {
+          throw _iteratorError7;
         }
       }
     }
