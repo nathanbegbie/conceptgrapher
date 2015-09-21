@@ -479,3 +479,7 @@ $(document).on("mouseleave", ".chip",  () => {
   $("body").find(".MisconNode").css("fill", "#e76351").css("opacity", "1");
   $("body").find(".ScaseNode").css("fill", "#55cd7c").css("opacity", "1");
 });
+
+$(document).ready(function() {
+  $('.modal-trigger').leanModal();
+});
