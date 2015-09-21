@@ -54,6 +54,12 @@ a {
   position: fixed;
 }
 
+#help-button {
+  top: 15px;
+  left: 180px;
+  position: fixed;
+}
+
 .input-field {
   margin-top: 0px;
 }

@@ -17,6 +17,20 @@
   <script type="text/javascript" src="js/list.min.js"></script>
   <script type="text/javascript" src="js/materialize.min.js"></script>
 
+  <!-- Modal Structure -->
+  <div id="help-modal" class="modal">
+    <div class="modal-content">
+      <h4>Help</h4>
+      <p>Below is a key for the different types of nodes in the graph.</p>
+      <div class="center">
+        <img src="/images/full-key.png">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Close</a>
+    </div>
+  </div>
+
   <div class="row full">
     <div id="main-pane">
       <div id="svg-wrapper">
@@ -24,6 +38,11 @@
       <div class="cycles-button show-cycles">
         <a id="cycle-button" class="btn small-text waves-effect waves-light cycles-button">
           Show Cycles
+        </a>
+      </div>
+      <div id="help-button">
+        <a href="#help-modal" class="btn-flat modal-trigger small-text waves-effect waves-light">
+          Help
         </a>
       </div>
       <div class="card-panel valign-wrapper" id="description">
