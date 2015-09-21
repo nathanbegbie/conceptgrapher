@@ -1,3 +1,7 @@
+import sys
+import os
+myPath = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, myPath + '/../')
 from Nodes import Node
 from Graph import Graph
 from Edge import Edge
