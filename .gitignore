@@ -7,3 +7,4 @@ ve/
 !test_content/test3.map
 !test_content/testcycle1.map
 !test_content/testcycle2.map
+.coverage
