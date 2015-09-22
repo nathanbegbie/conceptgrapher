@@ -17,23 +17,41 @@
   <script type="text/javascript" src="js/list.min.js"></script>
   <script type="text/javascript" src="js/materialize.min.js"></script>
 
-  <div class="row">
-    <div class="col s9">
+  <!-- Modal Structure -->
+  <div id="help-modal" class="modal">
+    <div class="modal-content">
+      <h4>Help</h4>
+      <p>Below is a key for the different types of nodes in the graph.</p>
+      <div class="center">
+        <img src="/images/full-key.png">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Close</a>
+    </div>
+  </div>
+
+  <div class="row full">
+    <div id="main-pane">
       <div id="svg-wrapper">
       </div>
       <div class="cycles-button show-cycles">
-        <a class="btn-floating tooltipped btn-large waves-effect waves-light red" data-position="right" data-tooltip="Show Cycles">
-          <i id="cycle-icon" class="material-icons">visibility</i>
+        <a id="cycle-button" class="btn small-text waves-effect waves-light cycles-button">
+          Show Cycles
+        </a>
+      </div>
+      <div id="help-button">
+        <a href="#help-modal" class="btn-flat modal-trigger small-text waves-effect waves-light">
+          Help
         </a>
       </div>
       <div class="card-panel valign-wrapper" id="description">
       </div>
     </div>
-    <div class="col s3">
+    <div id="sidebar">
       <div id="group-wrapper" class="card-panel">
         <div id="groups">
           <div class="input-field">
-            <!--<i class="material-icons prefix">search</i>-->
             <input class="search" type="text"/>
             <label>Type Group Name to Filter</label>
           </div>
@@ -46,7 +64,9 @@
         </div>
       </div>
       <!-- Needs to be here for List.js to run -->
+      <script type="text/javascript" src="js/visualizer-compiled.js"></script>
       <script type="text/javascript" src="js/main-compiled.js"></script>
+      <script type="text/javascript" src="js/events-compiled.js"></script>
       <div id="filter-wrapper" class="card-panel">
         <div id="filter">
         </div>

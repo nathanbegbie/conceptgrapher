@@ -19,8 +19,13 @@
   -webkit-font-smoothing: antialiased;
 }
 
+html {
+  height: 100%;
+}
+
 body {
   font: 20px arial;
+  height: 100%;
 }
 
 li {
@@ -44,8 +49,14 @@ a {
 }
 
 .cycles-button {
-  bottom: 70px;
+  top: 15px;
   left: 24px;
+  position: fixed;
+}
+
+#help-button {
+  top: 15px;
+  left: 190px;
   position: fixed;
 }
 
@@ -78,7 +89,36 @@ a {
   color: #FFFFFF;
 }
 
+.full {
+  height: 100%;
+}
+
+#sidebar {
+  height: 100%;
+  width: 20%;
+  float: right;
+  margin-right: 20px;
+}
+
+#main-pane {
+  margin-left: 20px;
+  height: 100%;
+  width: 75%;
+  float: left;
+}
+
+.small-text {
+  font-size: 16px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+#groups {
+  height: 100%;
+}
+
 #group-wrapper {
+  height: 60%;
   margin-top: 18px;
   padding-left: 0px;
   padding-right: 0px;
@@ -90,13 +130,12 @@ a {
 }
 
 #groups-scroll {
-  height: 300px;
+  height: 85%;
   overflow-y: auto;
 }
 
 #description {
-  margin: 0px;
-  height: 30px;
+  height: 50px;
   font-size: 16px;
 }
 
@@ -120,14 +159,10 @@ text {
   background-color: #eee;
 }
 
-#svg-wrapper {
-  height: 100%;
-}
-
 #filter-wrapper {
   margin-top: 23px;
   overflow-y: scroll;
-  height: 200px;
+  height: 30%;
 }
 
 #filter-text {
@@ -151,7 +186,12 @@ text {
 }
 
 .node.ConceptNode {
-  fill: #4783c1;
+  fill: #61a3e7;
+}
+
+.node.ConceptNode text {
+  fill: #000000;
+  stroke: #000000;
 }
 
 .node.FactNode {
