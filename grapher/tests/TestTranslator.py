@@ -1,3 +1,8 @@
+import sys
+import os
+myPath = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, myPath + '/../')
+
 from Nodes import FactNode, ConceptNode, MisconNode, ScaseNode
 from Translator import Translator
 
