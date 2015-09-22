@@ -4,11 +4,7 @@ class Node(object):
     Attributes:
         ID: a string representing the Node's ID (unique identifier).
         content: a string representing the Node's description
-        colour
-        shape
         groups: a list of strings of the groups to which the node belongs
-        ?inDegree: an integer of how many edges point to the node
-        ?outDegree: an integer of how many nodes the node points to
         successors: A list of Node objects one edge away from the node
     """
 
@@ -23,12 +19,7 @@ class Node(object):
 
 
 class FactNode(Node):
-    """A subclass of Node, specifically a node containing a fact.
-Attributes
-    :
-    content: a string containing the content of the fact
-    """
-
+    """A subclass of Node, specifically a node containing a fact."""
     def __init__(self, ID, content):
         """Return a Node object with name *name* and content *content*"""
         # super?
@@ -38,11 +29,7 @@ Attributes
 
 
 class MisconNode(Node):
-    """A subclass of Node, specifically a node containing a misconception.
-
-    Attributes:
-    content: a string containing the content of the misconception
-    """
+    """A subclass of Node, specifically a node containing a misconception."""
 
     def __init__(self, ID, content):
         """Return a Node object with name *name* and content *content*"""
@@ -52,11 +39,7 @@ class MisconNode(Node):
 
 
 class ScaseNode(Node):
-    """A subclass of Node, specifically a node containing an scase.
-
-    Attributes:
-    content: a string containing the content of the scase
-    """
+    """A subclass of Node, specifically a node containing an scase."""
 
     def __init__(self, ID, content):
         """Return a Node object with name *name* and content *content*"""
@@ -66,11 +49,7 @@ class ScaseNode(Node):
 
 
 class ConceptNode(Node):
-    """A subclass of Node, specifically a node containing a concept.
-
-    Attributes:
-    content: a string containing the content of the concept
-    """
+    """A subclass of Node, specifically a node containing a concept."""
 
     def __init__(self, ID, content):
         """Return a Node object with name *name* and content *content*"""

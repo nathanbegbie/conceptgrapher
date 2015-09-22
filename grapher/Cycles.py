@@ -3,8 +3,10 @@ from Graph import Graph
 
 
 class Cycles:
+    """A class that contains a method to detect the cycles in a given graph"""
 
     def find_cycle(self, graph):
+        """Method to find and return a list containing the IDs of nodes involved in cycles"""
 
         index_counter = [0]
         stack = []  # stack of Node IDs
