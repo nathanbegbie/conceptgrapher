@@ -6,16 +6,20 @@ This package will achieve the following:
     3] output a JSON file called data.json with the necessary node, edge and group information
     2] Start a server that will render a visualization of the nodes and edges on localhost:8000
 
-To setup the environment to run the software
+To setup the environment to run the software:
 
     1] ensure that python, virtualenv and python-pip package are installed/working on your machine 
 
-    2]run the following:
-        sudo sh bootsrap.sh
+    2] run the following:
+        sudo sh setup.sh
 
-Then navigate to localhost:8000 on Chrome (it will not work on another browser)
+To run the porgram:
+    1] run the following
+        sh run.sh
 
-to stop the server hosting the visualization, use:
+    2] Then navigate to localhost:8000 on Chrome (it will not work on another browser)
+
+To stop the server hosting the visualization, use:
     ctrl + c
 
 To run the tests, run the following:
