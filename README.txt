@@ -14,10 +14,12 @@ To setup the environment to run the software:
         sudo sh setup.sh
 
 To run the porgram:
-    1] run the following
+    1] move the .map files that you want to view, into the root folder
+
+    2] run the following
         sh run.sh
 
-    2] Then navigate to localhost:8000 on Chrome (it will not work on another browser)
+    3] Then navigate to localhost:8000 on Chrome (it will not work on another browser)
 
 To stop the server hosting the visualization, use:
     ctrl + c
