@@ -186,7 +186,12 @@ text {
 }
 
 .node.ConceptNode {
-  fill: #4783c1;
+  fill: #61a3e7;
+}
+
+.node.ConceptNode text {
+  fill: #000000;
+  stroke: #000000;
 }
 
 .node.FactNode {
