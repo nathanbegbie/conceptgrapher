@@ -12,6 +12,7 @@ There is also the ability to show cyclical dependencies in the data
 
 ###Setup
 This package will achieve the following:
+
 1. Parse the data from all .map files in the root folder
 2. create python objects from the data
 3. output a JSON file called data.json with the necessary node, edge and group information
@@ -23,6 +24,7 @@ To setup the environment to run the software:
 2. run the following: `sudo sh setup.sh`
 
 To run the program:
+
 1. move the .map files that you want to process, into the root folder
 2. run the following: `sh run.sh`
 3. Then navigate to localhost:8000 on Chrome (it will not work on another browser)
